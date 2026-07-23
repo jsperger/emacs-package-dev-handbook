@@ -1,0 +1,178 @@
+#+TITLE: Changelog — Emacs Package Developer's Handbook
+#+OPTIONS: toc:nil
+
+Changes to the guide's content, most recent first.  This handbook is
+being revised to target Emacs 31; see =PLAN.org= for the full roadmap.
+
+* Unreleased (Phase 2 — New-feature coverage)
+
+Coverage of package-development-relevant features added in Emacs
+28–31.  Every entry below was verified against the Emacs 31
+documentation and the running Emacs 31.0.90 interpreter.
+
+** New topic: Tree-sitter
+
+- Added a [[#tree-sitter][Tree-sitter]] section covering the =treesit.el= API for
+  package authors: parser management, font-lock rules, indentation,
+  navigation, Imenu/outline integration, grammar installation, and
+  major-mode conventions (=-ts-mode= suffix, =major-mode-remap-alist=,
+  =treesit-enabled-modes=).
+
+** General
+
+- Documented the Emacs 31 =cl-lib= renames: =cl-incf= → =incf=,
+  =cl-decf= → =decf=, =cl-oddp= → =oddp=, =cl-evenp= → =evenp=,
+  =cl-plusp= → =plusp=, =cl-minusp= → =minusp=, =cl-member-if= →
+  =member-if= (obsolete).  Noted =cl-locally=, =cl-declare=,
+  =cl-gensym= obsoletions and =defadvice= obsoletion (Emacs 30).
+- Added =cl-with-gensyms= and =cl-once-only= macro-writing macros
+  (Emacs 29).
+- Added modern binding and flow-control macros: =if-let*=,
+  =when-let*=, =and-let*= (noting =if-let=/=when-let= obsoletion in
+  Emacs 31), and =while-let= (Emacs 29).
+- Added =named-let= (Emacs 28) with example.
+- Added =static-if=, =static-when=, =static-unless= for
+  compile-time conditional evaluation (Emacs 30–31).
+- Added =handler-bind= (Emacs 30), =with-memoization= (Emacs 29),
+  =setopt= / =setopt-local= (Emacs 29/31), =require-with-check=
+  (Emacs 30).
+- Added the modern keymap API (Emacs 29): =keymap-set=,
+  =defvar-keymap=, =define-keymap=, =key-valid-p=, =key-parse=,
+  with a migration table from the older functions.
+
+** Packaging
+
+- Noted that =use-package= is [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][built in to Emacs since 29]], with a link
+  to the new Info manual.
+- Added =package-vc= (Emacs 29): installing packages from VC
+  checkouts, =package-vc-install=, =package-vc-checkout=,
+  =package-vc-prepare-patch=, =package-vc-selected-packages=.
+- Added =package-install-upgrade-built-in= (Emacs 29).
+
+** Collections
+
+- Added =seq.el= entry: =seq-split=, =seq-keep=, =seq-positions=,
+  =seq-remove-at-position= (Emacs 29).
+- Documented the new =sort= keyword arguments (=:key=, =:lessp=,
+  =:reverse=, =:in-place=) and the =value<= polymorphic comparison
+  function (Emacs 30).
+- Noted hash-table changes: =:rehash-size=/=:rehash-threshold=
+  ignored (Emacs 30), obarray opaque type (Emacs 30),
+  =hash-table-contains-p= (Emacs 31).
+- Added =drop-while=, =take-while=, =all=, =any= (Emacs 31) and
+  =ensure-list=, =length</>/==, =always= (Emacs 28).
+
+** Strings
+
+- Added built-in string functions: =string-search=, =string-replace=,
+  =string-pad=, =string-truncate-left=, =string-chop-newline=,
+  =string-split=, =string-clean-whitespace=, =string-fill=,
+  =string-limit= (Emacs 28), =string-equal-ignore-case= (Emacs 29),
+  =truncate-string-pixelwise= (Emacs 31), =replace-region-contents=
+  promotion to C (Emacs 31).
+- Noted Emacs 31 restrictions on string mutation via =aset=.
+
+** Testing
+
+- Documented ERT improvements: =ert-batch-print-length=/=-level=,
+  duplicate-test detection in batch (Emacs 29), JUnit XML reports via
+  =EMACS_TEST_JUNIT_REPORT= (Emacs 29), =ert-test-erts-file= and
+  =erts-mode= (Emacs 29), stable =ert-with-test-buffer= /
+  =ert-with-buffer-selected= / =ert-with-buffer-renamed= (Emacs 31),
+  =ert-play-keys= (Emacs 31).
+
+** Buffers
+
+- Added =buffer-match-p= / =match-buffers= (Emacs 29),
+  =with-restriction= / =without-restriction= (Emacs 29),
+  =buffer-local-set-state= (Emacs 29),
+  =with-buffer-unmodified-if-unchanged= (Emacs 29),
+  =with-work-buffer= (Emacs 31), =set-local= / =setopt-local=
+  (Emacs 31).
+
+** Debugging
+
+- Added the Emacs 31 error descriptor API: =error-type-p=,
+  =error-type=, =error-has-type-p=, =error-slot-value=, and the
+  =(signal err)= shorthand.
+- Noted that =debug= in batch sessions no longer kills Emacs
+  (Emacs 31).
+
+** Highlighting / font-locking
+
+- Listed the 12 new font-lock faces added in Emacs 29 for
+  tree-sitter (and general use).
+- Noted that font-lock face /variables/ (e.g.
+  =font-lock-string-face=) are obsolete in Emacs 31; use the face
+  symbol directly in font-lock rules.
+
+** Pattern matching
+
+- Documented Emacs 28 =pcase= extensions: =or= binds union of
+  variables, =(pred (not FUN))=, =cl-type= pattern, =pcase-setq=.
+- Noted =pcase= argument position in =pred=/=app= (Emacs 30) and
+  removal of nested backquotes (Emacs 31).
+- Added =let-alist= list indexing (Emacs 31) and =cond*= (Emacs 31).
+
+** Optimization
+
+- Added native compilation coverage: AOT compilation (Emacs 28),
+  =compilation-safety= and =ftype= declare form (Emacs 30),
+  =native-compile-directory= (Emacs 31).
+- Noted byte-compilation changes: interpreted closures "safe for
+  space" (Emacs 29), eager bytecode loading (Emacs 30),
+  =byte-compile-cond-use-jump-table= obsolete (Emacs 31).
+- Added =garbage-collect-heapsize= (Emacs 31) and =current-cpu-time=
+  (Emacs 29).
+
+** Checkers / linters
+
+- Documented the 11 new byte-compilation warning categories added in
+  Emacs 30 (missing =lexical-binding=, empty bodies, quoted error
+  names, identity comparison with literals, =condition-case= without
+  handlers, =unwind-protect= without unwind forms, useless =cond=
+  clauses, constant mutation, ignored return values, control
+  characters in docstrings, wide docstrings).
+
+** Other topics
+
+- Color: added =color-blend= (Emacs 31).
+- Data structure: added OClosures (=oclosure-define=,
+  =oclosure-lambda=) (Emacs 29).
+- Date / Time: noted =seconds-to-string= formatting options
+  (Emacs 31).
+- User interface: noted =tabulated-list-groups= (Emacs 30).
+- XML / HTML: added =dom-inner-text=, replacing obsolete =dom-text= /
+  =dom-texts= (Emacs 31).
+
+* Phase 1 — Correctness sweep
+
+Removed or rewrote references to deprecated functions and fixed code
+examples so the guide makes no false or deprecated claims when read
+against Emacs 31.
+
+- Fixed =called-interactively-p= (added required ='any= argument),
+  =byte-compile-file= (removed obsolete ='load= argument), and
+  =buffer-substring= as obsolete generalized variable (replaced with
+  =delete-region= + =insert=) in the General topic's tangled code.
+- Added =(require 'warnings)= to =epdh.el= to silence a
+  free-variable byte-compiler warning.
+- Bumped =epdh.el= =Package-Requires= from Emacs 25.1 to 26.1
+  (code uses =if-let*=).
+- Replaced obsolete =labels= with =cl-labels= and =loop= with
+  =cl-loop= in the Pattern matching topic's =with-dict= and
+  =with-plist-vals= code examples.
+- Replaced bare CL accessors =second=/=third=/=fourth= with
+  =cl-second=/=cl-third=/=cl-fourth= in the Optimization topic's
+  =bench-multi= and =bench-multi-process-results= macros.
+- Fixed =byte-compile-file= 2-arg calling convention in
+  =bench-multi-lexical=.
+- Reflowed =bench= macro docstring (was wider than 80 characters).
+- Cleaned up =.elc= temp file leak in =bench-multi-lexical=.
+
+* Pre-revision baseline
+
+The guide was last substantively updated around 2024, targeting
+roughly the Emacs 28/29 era.  The revision to Emacs 31 began with
+Phase 0 (baseline and tooling) and Phase 1 (correctness) in
+July 2026.

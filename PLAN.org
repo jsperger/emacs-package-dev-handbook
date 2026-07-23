@@ -29,11 +29,17 @@ Milestone: /the guide makes no false or deprecated claims when read against Emac
 - Remove tips, workarounds, and advice that Emacs 28–31 made unnecessary (features now built in, defaults changed, bugs fixed).
 - Where historical context is worth keeping, mark it explicitly as historical rather than deleting.
 
-** Phase 2 — New-feature coverage (goal 3)
+** Phase 2 — New-feature coverage (goal 3)  [COMPLETE]
 Milestone: /every package-development-relevant feature added in Emacs 28–31 has a home in the guide./
 
 - Extract a candidate feature list from the NEWS files; triage by relevance to package development (not general Emacs use).
 - Write or extend sections for the survivors, slotting them into the existing alphabetical topic scheme rather than creating a version-based section.
+
+Completed on branch =phase-2/new-features= (10 commits, ~470 lines
+added).  Triage in =audit/new-features.org=: ~170 candidates
+examined, ~80 included across 15 topics + 1 new Tree-sitter topic,
+~90 excluded.  All claims verified against Emacs 31.0.90.  See
+NOTES.org for lessons learned.
 
 ** Phase 3 — Development-landscape overview (goal 4)
 Milestone: /a new section summarizes how the ecosystem has shifted since the guide's last revision./
@@ -95,7 +101,7 @@ Apply at the end of every phase (and to any milestone-sized merge into =develop=
 - [ ] Commit messages follow the =Prefix: description= convention.
 - [ ] Full diff read-through done; no unrelated churn (whitespace, export noise, ToC-only rewrites) mixed into content commits.
 
-* Operational notes (from Phases 0–1)
+* Operational notes (from Phases 0–2)
 
 Practical lessons that affect how later phases should be executed.
 See also =NOTES.org= for the full write-up.
@@ -108,6 +114,8 @@ See also =NOTES.org= for the full write-up.
   they can differ.
 - The byte-compiler enforces advertised calling conventions stricter
   than runtime; trust compiler warnings over =func-arity=.
+- Extract all CUSTOM_IDs before and after editing (=python3 -c
+  "import re; ..."=) to verify none are lost.
 
 ** Reference material
 - NEWS files cover one major version each (NEWS.29 = Emacs 29, etc.).
@@ -119,8 +127,35 @@ See also =NOTES.org= for the full write-up.
 - =references/emacs-info= (Emacs 31 info manuals) is authoritative for
   verifying current behavior.  Check it before writing any replacement
   or new content.
+- The "Lisp Changes" and "Incompatible Lisp Changes" sections in each
+  NEWS file are the highest-yield areas.  Line numbers: NEWS.29
+  ~3461/3093, NEWS.30 ~2123/1999, NEWS.31 ~4315/4100.
+- Verify features with =fboundp= / =locate-library= in batch Emacs.
+  Some Emacs 31 features are not yet in the 31.0.90 pre-release but
+  are documented in NEWS.31 — trust the NEWS file for these.
+
+** Content structure
+- New built-in features go under =*** Libraries= or =*** Reference=
+  as =****= entries tagged =:built_in:=.
+- The "Binding" section is about variable scope, not key bindings.
+  Keymap API features belong under General.
+- One commit per topic (or logical group).  =Prefix: description=
+  style: =Add: Extend Collections with seq.el, new sort API=.
+- New topic sections need: =**= heading in alphabetical order,
+  =:PROPERTIES:= with =:CUSTOM_ID:=, =:TOC:= drawer, standard
+  subheading scheme.
 
 ** Deferred items tracker
+- Phase 3: 8 ecosystem-level candidates listed in
+  =audit/new-features.org= under "Phase 3 candidates" (NonGNU ELPA,
+  package-vc distribution, use-package ubiquity, tree-sitter default
+  modes, native-comp maturity, Eglot built-in, erts testing paradigm).
+- Phase 4: Additional lower-priority features noted by triage agents
+  but not added in Phase 2: SQLite built-in (Emacs 29), textsec.el,
+  Track-Changes library (Emacs 30), PEG library (Emacs 30),
+  ert-font-lock, skip-when, which-key built-in (Emacs 30), User Lisp
+  directory (Emacs 31), package-x obsolete (Emacs 31), timeout
+  library (Emacs 31), treesit multi-language APIs (Emacs 31).
 - Phase 5: =cl-evenp= in Collections benchmarks (deprecated → =evenp=
   in Emacs 31, not yet obsolete; changing alters benchmark results).
 - Phase 6: 22 =archive.today= links returned 429 (rate-limited) in the
