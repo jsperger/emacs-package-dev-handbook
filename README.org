@@ -1003,6 +1003,13 @@ Includes these functions:
 +  =yk-color-srgb-to-rgb=
 +  =yk-color-to-rgb=
 
+**** =color-blend= (Emacs 31)                                   :built_in:
+:PROPERTIES:
+:CUSTOM_ID: color-blend
+:END:
+
+New in Emacs 31, =color-blend= takes two RGB lists and an optional ALPHA and returns an RGB list whose elements are blended in linear space proportional to ALPHA.  Useful for theme-aware packages that need to compute intermediate colors.
+
 ** Data structure                                           :data_structure:
 :PROPERTIES:
 :TOC:      :include descendants :depth 1
@@ -1110,8 +1117,17 @@ The dictionary tree data structures are a hybrid between tries and hash tables. 
 :END:
 
 #+BEGIN_QUOTE
-extmap is a very simple package that lets you build a read-only, constant database that maps Elisp symbols to almost arbitrary Elisp objects. The idea is to avoid preloading all data to memory and only retrieve it when needed.  This package doesn’t use any external programs, making it a suitable dependency for smaller libraries.
+extmap is a very simple package that lets you build a read-only, constant database that maps Elisp symbols to almost arbitrary Elisp objects. The idea is to avoid preloading all data to memory and only retrieve it when needed.  This package doesn't use any external programs, making it a suitable dependency for smaller libraries.
 #+END_QUOTE
+
+**** OClosures (Emacs 29)                                       :built_in:
+:PROPERTIES:
+:CUSTOM_ID: oclosures
+:END:
+
+New in Emacs 29, OClosures are "functions with slots" — function objects that expose additional information about themselves.  Use =oclosure-define= to define a new OClosure type and =oclosure-lambda= to create instances.  They are useful for creating functions that carry metadata, such as interactive specs computed on demand (via =oclosure-interactive-form=).
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/OClosures.html][the Elisp manual on OClosures]].
 
 ** Date / Time                                                 :dates:times:
 :PROPERTIES:
@@ -1228,6 +1244,13 @@ The primary function provided is: ~(datetime-format SYM-OR-FMT &optional TIME &r
 #+END_SRC
 
 There are several other symbols provided besides ~atom~, such as ~rfc-3339~, which formats dates according to that RFC.
+
+**** =seconds-to-string= formatting (Emacs 31)                  :built_in:
+:PROPERTIES:
+:CUSTOM_ID: seconds-to-string-formatting
+:END:
+
+In Emacs 31, =seconds-to-string= supports new optional formatting arguments to produce human-readable time-duration strings in a variety of formats, e.g. "6 months 3 weeks" or "5m 52.5s".  Useful for packages that display elapsed time or durations.
 
 ** Debugging                                                     :debugging:
 :PROPERTIES:
@@ -4043,6 +4066,60 @@ To work around this, pass a format string to ~error~, like ~(error "%s" "Foo doe
 
 + See [[*Building / Testing][Building / Testing tools]].
 
+** Tree-sitter                                                :tree_sitter:
+:PROPERTIES:
+:TOC:      :include descendants :depth 2
+:CUSTOM_ID: tree-sitter
+:END:
+
+Tree-sitter is a parser generator tool and incremental parsing library.  Emacs 29 added built-in support for tree-sitter via the =treesit.el= library, and Emacs 30 made tree-sitter-based major modes the default for many languages.  Package authors who write major modes or font-lock rules should be familiar with the tree-sitter API.
+
+*** Articles                                                     :articles:
+:PROPERTIES:
+:CUSTOM_ID: tree-sitter-articles
+:END:
+
+**** [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Parsing-Program-Source.html][Parsing Program Source (Elisp manual)]               :built_in:tutorial:
+:PROPERTIES:
+:CUSTOM_ID: parsing-program-source
+:END:
+
+The Elisp manual chapter on tree-sitter covers the =treesit.el= API: creating parsers, querying syntax trees, and using tree-sitter for font-lock, indentation, and navigation.
+
+*** Libraries                                                   :libraries:
+:PROPERTIES:
+:CUSTOM_ID: tree-sitter-libraries
+:END:
+
+**** =treesit.el=: Tree-sitter API for Emacs                    :built_in:
+:PROPERTIES:
+:CUSTOM_ID: treesit-el
+:END:
+
+=treesit.el= is the built-in Emacs interface to the tree-sitter library.  It provides:
+
+- Parser creation and management (=treesit-parser-create=, =treesit-parser-list=).
+- Syntax tree queries (=treesit-query-capture=, =treesit-query-range=).
+- Font-lock integration via =treesit-font-lock-rules= (Emacs 29; Emacs 30 added =:default-language=).
+- Indentation via =treesit-simple-indent-rules=.
+- Navigation: =treesit-thing-settings=, =treesit-forward-sexp=, =treesit-transpose-sexps=, =treesit-forward-sentence= (Emacs 30).
+- Imenu and outline integration via =treesit-simple-imenu-settings= and =treesit-outline-predicate=.
+- Grammar installation: =treesit-install-language-grammar= (Emacs 31 can use a local directory instead of a URL).
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Parsing-Program-Source.html][the Elisp manual on Parsing Program Source]].
+
+*** Best practices                                         :best_practices:
+:PROPERTIES:
+:CUSTOM_ID: tree-sitter-best-practices
+:END:
+
+**** Tree-sitter major mode conventions
+
+- Tree-sitter major modes use the =-ts-mode= suffix (e.g. =python-ts-mode=, =c-ts-mode=).
+- Emacs 30 uses =major-mode-remap-alist= to automatically remap built-in modes to their tree-sitter equivalents.  Packages can set =major-mode-remap-defaults= (Emacs 30) to provide default remappings.
+- Emacs 31 added =treesit-enabled-modes= to control which tree-sitter modes are active.
+- Each tree-sitter mode requires a language grammar library (=libtree-sitter-LANG.so=); Emacs looks in =treesit-extra-load-path=, =~/.emacs.d/tree-sitter=, and standard system directories.
+
 ** User interface                                                       :UI:
 :PROPERTIES:
 :TOC:      :include descendants :depth 2
@@ -4162,6 +4239,8 @@ Tabulated List mode is a major mode for displaying tabulated data, i.e., data co
 #+END_QUOTE
 
 + [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Tabulated-List-Mode.html][Manual]]
+
+In Emacs 30, the new buffer-local variable =tabulated-list-groups= controls display and separate sorting of groups of entries, enabling grouped list views.
 
 **** [[https://github.com/magit/transient][Transient]]
 :PROPERTIES:
@@ -4449,6 +4528,13 @@ produces this:
     </body>
   </html>
 #+END_SRC
+
+**** =dom-inner-text= (Emacs 31)                                :built_in:
+:PROPERTIES:
+:CUSTOM_ID: dom-inner-text
+:END:
+
+New in Emacs 31, =dom-inner-text= gets all the text within a DOM node recursively, returning it as a concatenated string.  It replaces the now-obsolete functions =dom-text= and =dom-texts=.
 
 * Blogs                                                               :blogs:
 :PROPERTIES:
