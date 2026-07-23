@@ -417,6 +417,27 @@ This library provides a =flycheck= checker for the metadata in Emacs Lisp files 
 Relint scans elisp files for mistakes in regexps, including deprecated syntax and bad practice.  It also checks the regexp-like arguments to =skip-chars-forward=, =skip-chars-backward=, =skip-syntax-forward= and =skip-syntax-backward=.
 #+END_QUOTE
 
+*** New byte-compilation warnings (Emacs 30)                   :built_in:
+:PROPERTIES:
+:CUSTOM_ID: new-byte-compilation-warnings
+:END:
+
+Emacs 30 added many new byte-compiler warnings that package authors should be aware of:
+
+- Missing =lexical-binding= directive on the first line.
+- Empty bodies in =when=, =unless=, =ignore-error=, =with-suppressed-warnings=.
+- Quoted error names in =condition-case= and =ignore-error= (e.g. ='arith-error= instead of =arith-error=).
+- Comparison by identity (=eq=, =eql=, =memq=, etc.) with literal strings, conses, vectors, or floats.
+- =condition-case= without any handlers.
+- =unwind-protect= without unwind forms.
+- Useless trailing =cond= clauses after a default clause.
+- Mutation of constant values (=setcar= on a quoted list, =aset= on a literal vector/string).
+- Ignored return values of functions declared =important-return-value= or =side-effect-free= (e.g. =nreverse= without using the result).
+- Control characters in docstrings.
+- Wide docstrings (can be disabled separately with warning name =docstrings-wide=).
+
+Most of these can be suppressed with =with-suppressed-warnings=.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Compiler-Warnings.html][the Elisp manual on Compiler Warnings]].
+
 ** Collections (lists, vectors, hash-tables, etc.)             :collections:
 :PROPERTIES:
 :TOC:      :include descendants :depth 1
@@ -1932,6 +1953,29 @@ Tools for developing highlighting/font-locking packages.
 :CUSTOM_ID: highlight-refontification-visualize-how-font-lock-refontifies-a-buffer
 :END:
 
+*** Reference                                                   :reference:
+:PROPERTIES:
+:CUSTOM_ID: highlighting-reference
+:END:
+
+**** New font-lock faces (Emacs 29)                             :built_in:
+:PROPERTIES:
+:CUSTOM_ID: new-font-lock-faces
+:END:
+
+Emacs 29 added new font-lock faces, primarily for use with tree-sitter modes but available to any package:
+
+=font-lock-bracket-face=, =font-lock-delimiter-face=, =font-lock-escape-face=, =font-lock-function-call-face=, =font-lock-misc-punctuation-face=, =font-lock-number-face=, =font-lock-operator-face=, =font-lock-property-name-face=, =font-lock-property-use-face=, =font-lock-punctuation-face=, =font-lock-regexp-face=, =font-lock-variable-use-face=.
+
+These provide finer-grained highlighting than the traditional faces.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Faces-for-Font-Lock.html][the Elisp manual on Faces for Font Lock]].
+
+**** Font-lock face variables obsolete (Emacs 31)               :built_in:
+:PROPERTIES:
+:CUSTOM_ID: font-lock-face-variables-obsolete
+:END:
+
+In Emacs 31, the font-lock face /variables/ (e.g. =font-lock-builtin-face=, =font-lock-comment-face=, =font-lock-string-face=, etc.) are now obsolete.  In font-lock rules, use the face symbol directly (quoted) instead of the variable.  For example, write ='font-lock-string-face= instead of the variable =font-lock-string-face=.  Customizing the faces via =customize-face= is unaffected.
+
 ** Multiprocessing (generators, threads)           :multiprocessing:
 :PROPERTIES:
 :ID:       94092c16-061c-45c9-9c66-77c5fdeceee8
@@ -2811,6 +2855,11 @@ This example shows the use of =pcase-let*= to destructure and bind a nested alis
       (list letter second)))  ;; => ("a" "b")
 #+END_SRC
 
+***** Recent pcase changes (Emacs 30–31)
+
+- Emacs 30: Functions in =pred= and =app= patterns can now specify the argument position explicitly.  For example, =(pred (> _ 5))= is equivalent to the old =(pred (< 5))=, and is often clearer.
+- Emacs 31: Nested backquotes are no longer supported in pcase patterns.  Code using nested backquote patterns must be rewritten.
+
 **** [[https://github.com/VincentToups/shadchen-el][shadchen-el]]                                             :shadchen:el:
 :PROPERTIES:
 :CUSTOM_ID: shadchen-el
@@ -2858,6 +2907,17 @@ let-alist is the best thing to happen to associative lists since the invention o
 :END:
 
 Here Artur introduces the macro and gives examples.
+
+***** Emacs 31: list indexing
+
+In Emacs 31, =let-alist= supports indexing into list values: symbols containing numbers are interpreted as list indices.  For example, =.key.0= looks up =key= in the alist and returns its first element.
+
+**** =cond*=: Alternative pattern matching (Emacs 31)    :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: cond-alternative-pattern-matching
+:END:
+
+New in Emacs 31, =cond*= is an alternative to =cond= and =pcase=.  Like them, it evaluates clauses in order and executes the first match.  =cond*= supports pcase's pattern-matching syntax and also provides a different, arguably less cryptic pattern syntax.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/cond_002a-Macro.html][the Elisp manual on the cond* Macro]].
 
 **** =with-dict=, =with-plist-vals=              :macros:plists:
 :PROPERTIES:
@@ -3056,6 +3116,40 @@ Chris explains how lambdas work with regard to byte-compilation and lexical bind
 :END:
 
 Rocky Bernstein's project to document the Elisp bytecode format (aka LAP, or Lisp Assembly Program).
+
+**** Native compilation (Emacs 28–31)                  :built_in:compilation:
+:PROPERTIES:
+:CUSTOM_ID: native-compilation
+:END:
+
+Native compilation (compiling Elisp to machine code via =libgccjit=) has matured significantly since Emacs 28:
+
+- Emacs 28: AOT (ahead-of-time) compilation via =--with-native-compilation=aot=; =native-compile-prune-cache= to clean the ELN cache.
+- Emacs 30: =compilation-safety= user option controls how safe native code is (0 = fastest but may crash on type errors, 1 = default, 2 = safest).  The =safety= declare form sets this per-function.
+- Emacs 30: =ftype= declare form specifies function argument/return types for the native compiler: =(declare (ftype (function (integer boolean) string)))=.  Incorrect types may crash Emacs at =compilation-safety= 0.
+- Emacs 30: =important-return-value= declare form warns when a function's return value is implicitly ignored.
+- Emacs 31: =native-compile-directory= natively compiles all Lisp files in a directory tree.
+- Emacs 31: =native-comp-async-on-battery-power= controls whether async native-comp runs on battery.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Native-Compilation.html][the Elisp manual on Native Compilation]].
+
+**** Byte-compilation changes (Emacs 29–31)            :built_in:compilation:
+:PROPERTIES:
+:CUSTOM_ID: byte-compilation-changes
+:END:
+
+- Emacs 29: Interpreted closures are now "safe for space" — they only capture the part of the lexical environment they need, avoiding potential memory leaks.
+- Emacs 30: Bytecode is always loaded eagerly; =byte-compile-dynamic= has no effect and =fetch-bytecode= is obsolete.
+- Emacs 30: Many new byte-compiler warnings (see [[#new-byte-compilation-warnings][Checkers / linters]]).
+- Emacs 31: =byte-compile-cond-use-jump-table= is obsolete.
+- Emacs 31: =current-cpu-time= gives access to CPU time for benchmarking.
+
+**** =garbage-collect-heapsize= (Emacs 31)              :built_in:profiling:
+:PROPERTIES:
+:CUSTOM_ID: garbage-collect-heapsize
+:END:
+
+New in Emacs 31, =garbage-collect-heapsize= returns the same info as =garbage-collect= but without actually performing a collection.  Useful for monitoring memory usage without the overhead of a full GC.
 
 *** Tools               
 :PROPERTIES:
