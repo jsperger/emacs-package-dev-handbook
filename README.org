@@ -2545,7 +2545,7 @@ The script can run Emacs with the developer's local Emacs configuration, or with
 -  State "TODO"       from              [2018-07-29 Sun 13:11]
 :END:
 
-***** TODO [[https://github.com/jwiegley/use-package][use-package: A use-package declaration for simplifying your .emacs]] :needs_examples:
+***** TODO [[https://github.com/jwiegley/use-package][use-package: A use-package declaration for simplifying your .emacs]] :needs_examples:built_in:
 :PROPERTIES:
 :ID:       540617fd-d4ff-47df-89da-6c48c8f27785
 :CUSTOM_ID: use-package-a-use-package-declaration-for-simplifying-your-emacs
@@ -2554,7 +2554,30 @@ The script can run Emacs with the developer's local Emacs configuration, or with
 -  State "TODO"       from              [2018-07-29 Sun 13:11]
 :END:
 
-Developed by the current maintainer of Emacs, himself, John Wiegley.
+Developed by the current maintainer of Emacs, himself, John Wiegley.  Since Emacs 29, =use-package= is [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][built in to Emacs]] and no longer needs to be installed separately.  See the [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][use-package Info manual]] for documentation.
+
+***** =package-vc=: Install packages from VC checkouts           :built_in:
+:PROPERTIES:
+:CUSTOM_ID: package-vc
+:END:
+
+New in Emacs 29, =package-vc= extends =package.el= to install packages directly from version-control checkouts (Git, etc.) rather than only from archive tarballs.  This is useful for package authors who want users to try development versions, and for users who want to track a package's repository.
+
+Key commands:
+- =package-vc-install=: Install a package from a VC URL.
+- =package-vc-checkout=: Check out a package's repository.
+- =package-vc-prepare-patch=: Prepare a patch from a checked-out package.
+
+The user option =package-vc-selected-packages= allows declarative specification of VC packages, similar to =package-selected-packages= for archive packages.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Fetching-Package-Sources.html][the Emacs manual on Fetching Package Sources]].
+
+***** =package-install-upgrade-built-in=                         :built_in:
+:PROPERTIES:
+:CUSTOM_ID: package-install-upgrade-built-in
+:END:
+
+New in Emacs 29, this user option, when non-nil, allows =package-install= to upgrade packages that are built in to Emacs (such as =use-package= and =eglot=) to newer versions from GNU ELPA.
 
 ***** [[https://github.com/Malabarba/paradox][paradox: modernizing Emacs' Package Menu. With package ratings, usage statistics, customizability, and more.]]
 :PROPERTIES:
