@@ -1,0 +1,363 @@
+#+TITLE: Phase 0 — Link Baseline Report
+#+DATE: 2026-07-23
+
+* Summary
+
+| Disposition | Count |
+|-------------+-------|
+| dead        |    26 |
+| unknown     |    22 |
+| artifact    |    10 |
+| n/a         |    10 |
+| ok          |   238 |
+|-------------+-------|
+| Total       |   306 |
+
+Checked with =audit/check-links.py= (Python urllib, HEAD then GET
+fallback, 15 s timeout, 10 parallel workers, User-Agent
+=Mozilla/5.0 (compatible; EPDH-link-checker)=).
+
+** Disposition key
+
+- =ok= :: HTTP 2xx.
+- =redirect= :: HTTP 3xx (final destination after following redirects).
+- =dead= :: HTTP 4xx/5xx or connection failure.
+- =unknown= :: could not determine (e.g. rate-limited 429 from archive.today).
+- =artifact= :: URL extraction artifact from org-link parsing; the real URL is checked separately.
+- =n/a= :: example/placeholder URL in documentation (not a real link).
+
+* Dead links
+| URL | Section | HTTP | Notes |
+|-----+---------+------+-------|
+| http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.188.9344&rep=rep1&type=pdf | Data structure | 502 | HTTP 502 |
+| http://git.savannah.gnu.org/cgit/emacs.git/tree/modules/mod-test/mod-test.c?id=e18ee60b02d08b2f075903005798d3d6064dc013 | TODO Dynamic modules section | 502 | HTTP 502 |
+| http://git.savannah.gnu.org/cgit/emacs.git/tree/src/emacs-module.h?id=e18ee60b02d08b2f075903005798d3d6064dc013 | TODO Dynamic modules section | 502 | HTTP 502 |
+| http://kgabis.github.com/parson/ | TODO Dynamic modules section | 0 | connection failed / timeout |
+| http://nic.ferrier.me.uk/ | TODO Add people [1/8] | 0 | connection failed / timeout |
+| http://nic.ferrier.me.uk/blog/2013_03/refactoring-elisp-polymorphically | Pattern matching | 0 | connection failed / timeout |
+| http://sachachua.com/blog/category/geek/emacs/emacs-news/ | Sacha Chua | 404 | HTTP 404 |
+| https://amodernist.com/texts/emacs-style.html | Packaging | 403 | HTTP 403 |
+| https://github.com/lunaryorn/emacs-module.rs | TODO Dynamic modules section | 404 | HTTP 404 |
+| https://gitlab.petton.fr/DamienCassou/makel/ | Packaging | 0 | connection failed / timeout |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Pattern-matching-case-statement.html | Pattern matching | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/I-wished-gnu-emacs-had | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/a-blast-from-the-past-the-tale-of-concurrency-in-emacs | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/a-future-for-concurrency-in-emacs-lisp | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/advanced-syntactic-fontification | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/autoloads-in-emacs-lisp | Packaging | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/autoloads-in-emacs-lisp | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/calling-python-from-haskell | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/emacs-script-pitfalls | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/my-emacs-configuration-with-use-package | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/read-and-write-files-in-emacs-lisp | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/reproduce-bugs-in-emacs-Q | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/search-based-fontification-with-keywords | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/syntactic-fontification-in-emacs | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.lunaryorn.com/posts/use-package-el-really | TODO Articles to add [0/13] | 404 | HTTP 404 |
+| https://www.with-emacs.com/ | TODO Add people [1/8] | 0 | connection failed / timeout |
+
+* Unknown (rate-limited)
+| URL | Section | HTTP | Notes |
+|-----+---------+------+-------|
+| http://archive.today/0Y3Md | Pattern matching | 429 | rate-limited (429); likely still alive |
+| http://archive.today/0nfB4 | Packaging | 429 | rate-limited (429); likely still alive |
+| http://archive.today/2VtOU | Packaging | 429 | rate-limited (429); likely still alive |
+| http://archive.today/2wNFm | Pattern matching | 429 | rate-limited (429); likely still alive |
+| http://archive.today/AfL0y | Multiprocessing (generators, threads) | 429 | rate-limited (429); likely still alive |
+| http://archive.today/DFx3S | Optimization | 429 | rate-limited (429); likely still alive |
+| http://archive.today/FAzd8 | Pattern matching | 429 | rate-limited (429); likely still alive |
+| http://archive.today/Irane | Multiprocessing (generators, threads) | 429 | rate-limited (429); likely still alive |
+| http://archive.today/J4DqY | Pattern matching | 429 | rate-limited (429); likely still alive |
+| http://archive.today/LUtfZ | Packaging | 429 | rate-limited (429); likely still alive |
+| http://archive.today/T8dHM | Binding | 429 | rate-limited (429); likely still alive |
+| http://archive.today/UZHhS | Packaging | 429 | rate-limited (429); likely still alive |
+| http://archive.today/YxwP5 | Data structure | 429 | rate-limited (429); likely still alive |
+| http://archive.today/ZS6pU | Multiprocessing (generators, threads) | 429 | rate-limited (429); likely still alive |
+| http://archive.today/ppIuJ | Optimization | 429 | rate-limited (429); likely still alive |
+| http://archive.today/vmITX | Pattern matching | 429 | rate-limited (429); likely still alive |
+| http://archive.today/wip/pdIQH | Optimization | 429 | rate-limited (429); likely still alive |
+| http://archive.today/xPWJP | Regular expressions | 429 | rate-limited (429); likely still alive |
+| http://archive.today/xe0Js | Optimization | 429 | rate-limited (429); likely still alive |
+| http://archive.today/xm5zq | Optimization | 429 | rate-limited (429); likely still alive |
+| https://archive.ph/Jygil | Strings | 429 | rate-limited (429); likely still alive |
+| https://archive.vn/uidZr | Testing | 429 | rate-limited (429); likely still alive |
+
+* Extraction artifacts
+These are mangled URLs from org-link parsing (=][= encoded as
+=%5D%5B=).  The underlying real URLs are checked separately and
+are typically fine.  Listed for completeness.
+
+| URL | Section | HTTP |
+|-----+---------+------|
+| https://github.com/alphapapa/plz.el\ | Networking | 200 |
+| https://github.com/magnars/dash.el%5D%5Bdash.el%5D%5D | Matus Goljer | 404 |
+| https://github.com/magnars/s.el%5D%5Bs.el:%20The%20long%20lost%20Emacs%20string%20manipulation%20library%5D%5D | Magnar Sveen | 404 |
+| https://github.com/skeeto/elfeed/blob/master/elfeed-curl.el\ | Networking | 200 |
+| https://github.com/skeeto/emacs-aio%5D%5Bemacs-aio:%20async/await%20for%20Emacs%20Lisp%5D%5D | TODO Add people [1/8] | 404 |
+| https://github.com/tkf/emacs-request%5D%5BRequest.el%20--%20Easy%20HTTP%20requests%5D%5D | Networking | 404 |
+| https://github.com/wasamasa? | TODO Add people [1/8] | 200 |
+| https://gitlab.petton.fr/DamienCassou/navigel/%5D%5Bnavigel%5D%5D | Damien Cassou | 0 |
+| https://nullprogram.com/blog/2014/05/27/%5D%5BEmacs%20Lisp%20Buffer%20Passing%20Style%5D%5D | Buffers | 404 |
+| https://nullprogram.com/blog/2019/12/10/%5D%5BEfficient%20Alias%20of%20a%20Built-In%20Emacs%20Lisp%20Function%20%C2%AB%20null%20program%5D%5D | Chris Wellons | 404 |
+
+* Example/placeholder URLs (n/a)
+These appear in documentation examples and are not real links.
+
+| URL | Section |
+|-----+---------|
+| http://%s/%s | UNDERWAY Automate adding new links and summaries |
+| http://example.com/jrhacker/superfrobnicate | Packaging |
+| http://server/path?query#fragment | Regular expressions |
+| https://example.com/bar.el | Packaging |
+| https://example.com/foo.el | Packaging |
+| https://example.com/package-name.el | Packaging |
+| https://melpa.org/#/package-name | Packaging |
+| https://melpa.org/packages/package-name-badge.svg | Packaging |
+| https://stable.melpa.org/#/package-name | Packaging |
+| https://stable.melpa.org/packages/package-name-badge.svg | Packaging |
+
+* OK links
+#+BEGIN_DETAILS
+243 links returned HTTP 200.  Full list:
+
+| URL | Section |
+|-----+---------|
+| http://diobla.info/blog-archive/modules-tut.html | TODO Dynamic modules section |
+| http://endlessparentheses.com/new-on-elpa-and-in-emacs-25-1-let-alist.html | Pattern matching |
+| http://endlessparentheses.com/new-on-elpa-and-in-emacs-25-1-let-alist.html | Artur Malabarba |
+| http://francismurillo.github.io/2017-03-30-Exploring-Emacs-rx-Macro/ | Regular expressions |
+| http://github.com/sachac/ | Sacha Chua |
+| http://github.com/skeeto | TODO Add people [1/8] |
+| http://gnu.org/ | XML / HTML |
+| http://kitchingroup.cheme.cmu.edu/blog/2017/04/16/A-callable-plist-data-structure-for-Emacs/ | Pattern matching |
+| http://lists.gnu.org/archive/html/emacs-devel/2014-01/msg01006.html | General |
+| http://newartisans.com/ | John Wiegley |
+| http://newartisans.com/2016/01/pattern-matching-with-pcase/ | Pattern matching |
+| http://nullprogram.com/ | TODO Add people [1/8] |
+| http://nullprogram.com/blog/2016/11/05/ | TODO Dynamic modules section |
+| http://nullprogram.com/blog/2017/02/14/ | TODO Dynamic modules section |
+| http://nullprogram.com/blog/2018/02/14/ | Data structure |
+| http://phillord.github.io/m-buffer-el/#sec-5-1-2 | Optimization |
+| http://sachachua.com/blog/ | Sacha Chua |
+| http://stackoverflow.com/a/38805102 | Packaging |
+| http://www.capstone-engine.org/ | TODO Dynamic modules section |
+| http://www.dr-qubit.org/emacs_data-structures.html | Data structure |
+| http://www.dr-qubit.org/emacs_data-structures.html | TODO Add people [1/8] |
+| http://www.gnu.org/licenses/ | Packaging |
+| http://www.wilfred.me.uk/blog/2017/03/19/pattern-matching-in-emacs-lisp/ | Pattern matching |
+| https://alphapapa.github.io/emacs-package-dev-handbook/ | (preamble) |
+| https://blog.abrochard.com/circleci-for-emacs-packages.html | Testing |
+| https://coldnew.github.io/2d16cc25/ | TODO Dynamic modules section |
+| https://elpa.gnu.org/ | Collections (lists, vectors, hash-tables, etc.) |
+| https://elpa.gnu.org/packages/lex.html | Regular expressions |
+| https://elpa.gnu.org/packages/map.html | Collections (lists, vectors, hash-tables, etc.) |
+| https://elpa.gnu.org/packages/myers.html | Data structure |
+| https://elpa.gnu.org/packages/persist.html | Collections (lists, vectors, hash-tables, etc.) |
+| https://emacs-eask.github.io/Getting-Started/Introduction/#-why-eask | Packaging |
+| https://emacs.cafe/emacs/package/2017/08/01/beginend.html | Editing |
+| https://emacs.stackexchange.com/questions/2129/why-is-let-faster-with-lexical-scope | Packaging |
+| https://framagit.org/steckerhalter/quelpa-use-package | (preamble) |
+| https://github.com/AdamNiederer/elquery | XML / HTML |
+| https://github.com/DamienCassou | Damien Cassou |
+| https://github.com/DamienCassou/navigel | User interface |
+| https://github.com/DarwinAwardWinner/with-simulated-input | Testing |
+| https://github.com/Fuco1/ | Matus Goljer |
+| https://github.com/Fuco1/smartparens | Editing |
+| https://github.com/IvanMalison/multi-line | Editing |
+| https://github.com/Lindydancer | Anders Lindgren |
+| https://github.com/Lindydancer/el2markdown | General |
+| https://github.com/Lindydancer/face-explorer | Highlighting / font-locking |
+| https://github.com/Lindydancer/faceup | Highlighting / font-locking |
+| https://github.com/Lindydancer/font-lock-profiler | Highlighting / font-locking |
+| https://github.com/Lindydancer/font-lock-regression-suite | Highlighting / font-locking |
+| https://github.com/Lindydancer/font-lock-studio | Highlighting / font-locking |
+| https://github.com/Lindydancer/highlight-refontification | Highlighting / font-locking |
+| https://github.com/Lindydancer/lisp-extra-font-lock | Highlighting / font-locking |
+| https://github.com/Lindydancer/multicolumn | General |
+| https://github.com/Malabarba | Artur Malabarba |
+| https://github.com/Malabarba/aggressive-indent-mode | Editing |
+| https://github.com/Malabarba/paradox | Packaging |
+| https://github.com/NicolasPetton/stream | Collections (lists, vectors, hash-tables, etc.) |
+| https://github.com/VincentToups/emacs-utils | TODO Add people [1/8] |
+| https://github.com/VincentToups/shadchen-el | Pattern matching |
+| https://github.com/Wilfred/emacs-refactor | Refactoring |
+| https://github.com/Wilfred/ht.el | Collections (lists, vectors, hash-tables, etc.) |
+| https://github.com/Wilfred/loop.el | General |
+| https://github.com/Wilfred/propcheck | Testing |
+| https://github.com/Wilfred/remacs | Wilfred Hughes |
+| https://github.com/Wilfred/suggest.el | General |
+| https://github.com/abo-abo/ace-window | Oleh Krehel |
+| https://github.com/abo-abo/avy | Oleh Krehel |
+| https://github.com/abo-abo/hydra | User interface |
+| https://github.com/abo-abo/lispy | Editing |
+| https://github.com/abo-abo/swiper | Oleh Krehel |
+| https://github.com/akirak/emacs-package-checker | Packaging |
+| https://github.com/alezost/bui.el | Buffers |
+| https://github.com/alezost/bui.el | User interface |
+| https://github.com/alphapapa/bashcaster | Animations / Screencasts |
+| https://github.com/alphapapa/elexandria/blob/master/elexandria.el | Strings |
+| https://github.com/alphapapa/emacs-package-dev-handbook | (preamble) |
+| https://github.com/alphapapa/emacs-package-dev-handbook | Wilfred Hughes |
+| https://github.com/alphapapa/emacs-package-dev-handbook/blob/master/epdh.el | (preamble) |
+| https://github.com/alphapapa/helm-org-rifle/issues/13 | Packaging |
+| https://github.com/alphapapa/makem.sh | Packaging |
+| https://github.com/alphapapa/org-make-toc | Packaging |
+| https://github.com/alphapapa/org-make-toc | Requirements |
+| https://github.com/alphapapa/org-make-toc | Table of Contents |
+| https://github.com/alphapapa/org-recent-headings/blob/master/org-recent-headings.el#L350 | Packaging |
+| https://github.com/alphapapa/org-recent-headings/blob/master/org-recent-headings.el#L377 | Packaging |
+| https://github.com/alphapapa/plz.el | Networking |
+| https://github.com/alphapapa/ts.el | Date / Time |
+| https://github.com/aspiers/etrace | Optimization |
+| https://github.com/bddean/xml-plus | XML / HTML |
+| https://github.com/cask/cask | Packaging |
+| https://github.com/clemera | TODO Add people [1/8] |
+| https://github.com/clemera?utf8=%25E2%259C%2593&tab=repositories&q=&type=source&language=emacs+lisp | TODO Add people [1/8] |
+| https://github.com/collarchoke/emacs-capstone | TODO Dynamic modules section |
+| https://github.com/cyrus-and/comb | Auditing / Reviewing |
+| https://github.com/dimitri/el-get | Packaging |
+| https://github.com/doublep/eldev | Packaging |
+| https://github.com/doublep/extmap | Data structure |
+| https://github.com/ebpa/tui.el | User interface |
+| https://github.com/ecukes/ecukes | Testing |
+| https://github.com/emacs-eask/cli | Packaging |
+| https://github.com/emacs-helm/helm-navi | Editing |
+| https://github.com/emacs-mirror/emacs/blob/master/lisp/emacs-lisp/subr-x.el | General |
+| https://github.com/emacs-mirror/emacs/blob/master/lisp/emacs-lisp/thunk.el | Binding |
+| https://github.com/emacs-pe/emacs-modules | TODO Dynamic modules section |
+| https://github.com/emacs-php/emacs-datetime | Date / Time |
+| https://github.com/gonewest818/elisp-lint | Checkers / linters |
+| https://github.com/hlissner | Henrik Lissner |
+| https://github.com/hlissner/doom-emacs | Henrik Lissner |
+| https://github.com/hlissner/emacs-doom-themer | Henrik Lissner |
+| https://github.com/hlissner/emacs-doom-themes | Henrik Lissner |
+| https://github.com/hlolli/csoundAPI_emacsLisp | TODO Dynamic modules section |
+| https://github.com/ieure/debase | Processes (incl. IPC, RPC) |
+| https://github.com/immerrr/ample-regexps.el | Regular expressions |
+| https://github.com/janestreet/ecaml | TODO Dynamic modules section |
+| https://github.com/jjpe/emacs_module_bindings | TODO Dynamic modules section |
+| https://github.com/jkitchin/emacs-modules | TODO Dynamic modules section |
+| https://github.com/joddie/pcre2el | Regular expressions |
+| https://github.com/jorgenschaefer/circe | Jorgen Schäfer |
+| https://github.com/jorgenschaefer/elpy | Jorgen Schäfer |
+| https://github.com/jorgenschaefer/emacs-buttercup | Testing |
+| https://github.com/jorgenschaefer/emacs-buttercup/issues/228 | Testing |
+| https://github.com/jorgenschaefer/pyvenv | Jorgen Schäfer |
+| https://github.com/jwiegley | John Wiegley |
+| https://github.com/jwiegley/use-package | Packaging |
+| https://github.com/kiwanami/emacs-calfw | User interface |
+| https://github.com/kiwanami/emacs-ctable | User interface |
+| https://github.com/kiwanami/emacs-edbi | TODO Add databases section |
+| https://github.com/kiwanami/emacs-widget-mvc | User interface |
+| https://github.com/knupfer/haskell-emacs | TODO Dynamic modules section |
+| https://github.com/lewang/command-log-mode | Animations / Screencasts |
+| https://github.com/magit/magit | Version control |
+| https://github.com/magit/transient | User interface |
+| https://github.com/magnars | Magnar Sveen |
+| https://github.com/magnars/dash.el | General |
+| https://github.com/magnars/dash.el | Pattern matching |
+| https://github.com/magnars/expand-region.el | Editing |
+| https://github.com/magnars/multiple-cursors.el | Editing |
+| https://github.com/magnars/s.el | Strings |
+| https://github.com/mattiase/relint | Checkers / linters |
+| https://github.com/melpa/melpa/pull/6191#issuecomment-498101336 | TODO Sequence shuffling examples and benchmarks |
+| https://github.com/nicferrier/emacs-db | TODO Add people [1/8] |
+| https://github.com/nicferrier/emacs-kv | Collections (lists, vectors, hash-tables, etc.) |
+| https://github.com/nicferrier/emacs-noflet | TODO Add people [1/8] |
+| https://github.com/pekingduck/emacs-sqlite3-api | TODO Add databases section |
+| https://github.com/philjackson/xmlgen | XML / HTML |
+| https://github.com/phillord | Phil Lord |
+| https://github.com/phillord/assess | Testing |
+| https://github.com/phillord/lentic | General |
+| https://github.com/phillord/m-buffer-el | Buffers |
+| https://github.com/plexus/a.el | Collections (lists, vectors, hash-tables, etc.) |
+| https://github.com/plexus/chemacs | General |
+| https://github.com/promethial/xtest | Testing |
+| https://github.com/publicimageltd/lister | User interface |
+| https://github.com/purcell/flycheck-package | Checkers / linters |
+| https://github.com/raxod502/straight.el | Packaging |
+| https://github.com/rejeep/el-mock.el | Testing |
+| https://github.com/rocky/elisp-bytecode | Optimization |
+| https://github.com/rolandwalker/list-utils | Collections (lists, vectors, hash-tables, etc.) |
+| https://github.com/rolandwalker?utf8=%25E2%259C%2593&tab=repositories&q=&type=source&language=emacs+lisp | Roland Walker |
+| https://github.com/rzl24ozi/cmigemo-module | TODO Dynamic modules section |
+| https://github.com/sigma/go-emacs | TODO Dynamic modules section |
+| https://github.com/sigma/mocker.el | Testing |
+| https://github.com/skeeto | Chris Wellons |
+| https://github.com/skeeto/elfeed | Chris Wellons |
+| https://github.com/skeeto/elfeed/blob/master/elfeed-curl.el | Networking |
+| https://github.com/skeeto/elfeed/blob/master/xml-query.el | XML / HTML |
+| https://github.com/skeeto/elfeed/issues/189 | XML / HTML |
+| https://github.com/skeeto/emacs-aio | Multiprocessing (generators, threads) |
+| https://github.com/skeeto/emacs-aio | Chris Wellons |
+| https://github.com/skeeto/emacsql | Chris Wellons |
+| https://github.com/skeeto/emacsql | TODO Add databases section |
+| https://github.com/syohex/emacs-cipher | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-eject | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-libyaml | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-lua | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-memcached | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-mruby-test | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-parson | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-perl | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-sqlite3 | TODO Dynamic modules section |
+| https://github.com/syohex/emacs-sqlite3 | TODO Add databases section |
+| https://github.com/syohex/emacs-zstd | TODO Dynamic modules section |
+| https://github.com/tali713/esxml | XML / HTML |
+| https://github.com/tarsius | Jonas Bernoulli |
+| https://github.com/tarsius/keycast | Animations / Screencasts |
+| https://github.com/tarsius/minions/pull/30 | TODO Benchmark ~seq-filter~ against ~cl-loop~, et al |
+| https://github.com/tkf/emacs-request | Networking |
+| https://github.com/tromey/emacs-ffi | TODO Dynamic modules section |
+| https://github.com/troyp/asoc.el | Collections (lists, vectors, hash-tables, etc.) |
+| https://github.com/vermiculus | TODO Add people [1/8] |
+| https://github.com/vermiculus/emake.el | Packaging |
+| https://github.com/victorhge/iedit | Editing |
+| https://github.com/vkazanov/elfuse | TODO Dynamic modules section |
+| https://github.com/volrath/treepy.el | TODO Tree-traversal |
+| https://github.com/yurikhan/yk-color | Color |
+| https://github.com/yuutayamada/nim-emacs-module | TODO Dynamic modules section |
+| https://github.com/zweifisch/enlive | XML / HTML |
+| https://gitlab.com/ambrevar/emacs-gif-screencast | Animations / Screencasts |
+| https://httpbin.org/ | Networking |
+| https://lists.gnu.org/archive/html/emacs-devel/2020-10/msg01423.html | TODO Add section about files |
+| https://nullprogram.com/ | Chris Wellons |
+| https://nullprogram.com/blog/2013/01/14/ | Multiprocessing (generators, threads) |
+| https://nullprogram.com/blog/2014/01/04/ | Optimization |
+| https://nullprogram.com/blog/2014/05/27/ | Strings |
+| https://nullprogram.com/blog/2016/12/11/ | Optimization |
+| https://nullprogram.com/blog/2016/12/22/ | Optimization |
+| https://nullprogram.com/blog/2017/01/30/ | Optimization |
+| https://nullprogram.com/blog/2017/02/14/ | Multiprocessing (generators, threads) |
+| https://nullprogram.com/blog/2017/10/27/ | Binding |
+| https://nullprogram.com/blog/2017/12/14/ | Optimization |
+| https://nullprogram.com/blog/2018/05/31/ | Multiprocessing (generators, threads) |
+| https://nullprogram.com/blog/2019/12/10/ | Optimization |
+| https://old.reddit.com/r/emacs/comments/60tl6o/tips_on_reading_dense_emacs_lisp_code/dfa92hg/ | General |
+| https://stackoverflow.com/questions/21075092/elisp-how-to-avoid-functions-are-not-known-to-be-defined-when-byte-compiling#comment31703432_21075724 | Packaging |
+| https://stackoverflow.com/questions/21880139/what-is-with-eval-after-load-in-emacs-lisp | Packaging |
+| https://www.emacswiki.org/emacs/DynamicBindingVsLexicalBinding | Packaging |
+| https://www.emacswiki.org/emacs/EmacsLispExpectations | Testing |
+| https://www.emacswiki.org/emacs/PatternMatching | Pattern matching |
+| https://www.emacswiki.org/emacs/UnitTesting | Testing |
+| https://www.emacswiki.org/emacs/ert-expectations.el | Testing |
+| https://www.gnu.org/licenses/ | (preamble) |
+| https://www.gnu.org/software/emacs/manual/cl.html | Pattern matching |
+| https://www.gnu.org/software/emacs/manual/html_mono/widget.html | User interface |
+| https://www.gnu.org/software/emacs/manual/html_node/cl/index.html | General |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Abstract-Display.html | User interface |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Declaring-Functions.html | Packaging |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html | Debugging |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Generators.html | Multiprocessing (generators, threads) |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Hooks-for-Loading.html | Packaging |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Lexical-Binding.html | Packaging |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Simple-Packages.html | Packaging |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Tabulated-List-Mode.html | User interface |
+| https://www.gnu.org/software/emacs/manual/html_node/elisp/Threads.html | Multiprocessing (generators, threads) |
+| https://www.gnu.org/software/emacs/manual/html_node/ert/ | Testing |
+| https://www.reddit.com/r/emacs/comments/63u5yn/how_to_use_autoload_cookies_for_custom_defunlike/ | Packaging |
+| https://www.reddit.com/r/emacs/comments/aupifm/what_is_the_best_way_to_do_plistremove/eh9xom5/ | Collections (lists, vectors, hash-tables, etc.) |
+| https://www.reddit.com/r/emacs/comments/idz35e/emacs_27_can_take_svg_screenshots_of_itself/ | TODO Mention Emacs 27.1 SVG screenshots |
+| https://www.reddit.com/r/emacs/comments/jmvzhs/has_anything_of_substance_ever_been_done_in_elisp/ | TODO stream.el benchmarks |
+| https://yoo2080.wordpress.com/2013/09/11/emacs-lisp-lexical-binding-gotchas-and-related-best-practices/ | Packaging |
+#+END_DETAILS
