@@ -375,6 +375,18 @@ package makers, as there is no need to bother about implementing routine details
 users, as it provides familiar and intuitive interfaces with usual keys (for moving by lines, marking, sorting, switching between buttons); and what is also important, the defined interfaces are highly configurable through various generated variables.
 #+END_QUOTE
 
+**** Built-in buffer utilities (Emacs 29–31)                    :built_in:
+:PROPERTIES:
+:CUSTOM_ID: built-in-buffer-utilities
+:END:
+
+- =buffer-match-p=, =match-buffers= (Emacs 29): Declarative buffer matching using conditions like regexps, =(major-mode . MODE)=, and =and=/=or=/=not= combinations.  Useful for package configuration and buffer filtering.
+- =with-restriction=, =without-restriction= (Emacs 29): Enhanced alternatives to =save-restriction= + =narrow-to-region= / =widen=, with optional labeled narrowing.
+- =buffer-local-set-state= (Emacs 29): Helper macro for minor modes to restore buffer-local variables when the mode is switched off.
+- =with-buffer-unmodified-if-unchanged= (Emacs 29): Mark the buffer as unmodified again if the net change is zero.
+- =with-work-buffer= (Emacs 31): Like =with-temp-buffer=, but reuses previously allocated buffers (up to =work-buffer-limit=, default 10), avoiding allocation overhead.
+- =set-local=, =setopt-local= (Emacs 31): Buffer-local equivalents of =set= and =setopt=.
+
 ** Checkers / linters                                     :linters:checkers:
 :PROPERTIES:
 :CUSTOM_ID: checkers--linters
@@ -1356,6 +1368,40 @@ You could write:
            nil))))
 #+END_SRC
 
+*** Reference                                                   :reference:
+:PROPERTIES:
+:CUSTOM_ID: debugging-reference
+:END:
+
+**** Error descriptor API (Emacs 31)                            :built_in:
+:PROPERTIES:
+:CUSTOM_ID: error-descriptor-api
+:END:
+
+Emacs 31 improved the API for manipulating error descriptors (the objects caught by =condition-case=):
+
+- =error-type-p=: Check whether an error descriptor matches a given error type.
+- =error-type=: Return the error type of a descriptor.
+- =error-has-type-p=: Check whether a descriptor has a given type.
+- =error-slot-value=: Access a specific slot of an error descriptor.
+- =(signal err)=: Signal an error descriptor directly, preserving =eq= identity (instead of =(signal (car err) (cdr err))=).
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Errors.html][the Elisp manual on Errors]].
+
+**** =handler-bind= (Emacs 30)                                  :built_in:
+:PROPERTIES:
+:CUSTOM_ID: handler-bind-debugging
+:END:
+
+See [[#handler-bind][the General section entry on =handler-bind=]].
+
+**** Batch debugging (Emacs 31)                                 :built_in:
+:PROPERTIES:
+:CUSTOM_ID: batch-debugging
+:END:
+
+In Emacs 31, calling =debug= in batch sessions no longer kills Emacs.  If you want Emacs to exit, your program must now call =kill-emacs= explicitly.  This makes it safer to use =debug= in batch scripts and CI pipelines.
+
 ** Destructuring                                             :destructuring:
 :PROPERTIES:
 :CUSTOM_ID: destructuring
@@ -1670,6 +1716,31 @@ Emacs 31 also added =setopt-local=, the buffer-local equivalent.
 :END:
 
 New in Emacs 30, =require-with-check= is like =require=, but it checks whether the feature is already loaded and, if so, verifies that the loaded file is not shadowed by a different version in =load-path=.  It either signals an error or forcibly reloads the file.  Useful for detecting version conflicts during development.
+
+**** Modern keymap API (Emacs 29)                       :built_in:keymaps:
+:PROPERTIES:
+:CUSTOM_ID: modern-keymap-api
+:END:
+
+Emacs 29 introduced a new set of functions for defining and manipulating keymaps, using the same key syntax as =kbd=.  Package authors should prefer these over the older functions:
+
+| New function         | Replaces                    |
+|----------------------+-----------------------------|
+| =keymap-set=         | =define-key=                |
+| =keymap-global-set=  | =global-set-key=            |
+| =keymap-local-set=   | =local-set-key=             |
+| =keymap-global-unset=| =global-unset-key=          |
+| =keymap-local-unset= | =local-unset-key=           |
+| =keymap-substitute=  | =substitute-key-definition= |
+| =keymap-lookup=      | =lookup-key= / =key-binding=|
+
+New macros for defining keymaps:
+- =defvar-keymap=: Define a keymap variable concisely, with =:repeat= support for =repeat-mode= and (Emacs 31) =:prefix t= for prefix commands.
+- =define-keymap=: Define a keymap with multiple bindings in one form.
+
+Also new: =key-valid-p= validates key syntax strictly, and =key-parse= is like =kbd= but always returns vectors.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Keymaps.html][the Elisp manual on Keymaps]].
 
 *** Tools                                                           :tools:
 :PROPERTIES:
