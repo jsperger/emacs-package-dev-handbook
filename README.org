@@ -3653,6 +3653,19 @@ Chris Wellons explains how to build strings in several steps.  This is achieved 
 :CUSTOM_ID: sel-the-long-lost-emacs-string-manipulation-library
 :END:
 
+**** Built-in string functions (Emacs 28–31)                    :built_in:
+:PROPERTIES:
+:CUSTOM_ID: built-in-string-functions
+:END:
+
+Emacs 28–31 added many string functions that previously required =s.el= or hand-rolled code:
+
+- Emacs 28: =string-pad=, =string-truncate-left=, =string-chop-newline=, =string-split=, =string-lines= (improved).
+- Emacs 29: =string-equal-ignore-case=.
+- Emacs 31: =string-pixel-width= now takes an optional BUFFER argument for face-remapping awareness; new =truncate-string-pixelwise= truncates by pixel width; =replace-region-contents= was promoted to C and now accepts a string or buffer directly (passing a function is deprecated).
+
+Note that in Emacs 31, string mutation via =aset= is further restricted: on unibyte strings the new character must be a single byte, and on multibyte strings both characters must be ASCII.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Strings.html][the Elisp manual on Strings]].
+
 *** Tools                                                           :tools:
 :PROPERTIES:
 :TOC: :depth 1
@@ -3754,6 +3767,13 @@ Cucumber is a great integration testing tool, used mostly for testing web applic
 :END:
 
 This is the standard, built-in Emacs testing library, used by core code and third-party packages alike.
+
+***** Recent ERT improvements (Emacs 29–31)
+
+- Emacs 29: New variables =ert-batch-print-length= and =ert-batch-print-level= control printing of Lisp values in batch test results.  Redefining an ERT test in batch mode now signals an error, catching duplicate test names.
+- Emacs 29: New =ert-test-erts-file= function and =erts-mode= allow testing buffer actions (indentation, fontification, etc.) from declarative =.erts= files.  See [[https://www.gnu.org/software/emacs/manual/html_node/ert/erts.html][the ERT manual on ERTS]].
+- Emacs 31: The macros =ert-with-test-buffer=, =ert-with-buffer-selected=, and =ert-with-buffer-renamed=, previously experimental in =ert-x=, are now stable and moved to =ert= itself.
+- Emacs 31: New =ert-play-keys= function sends keys to interactive input during tests, complementing =ert-simulate-keys=.
 
 *** Libraries                                                   :libraries:
 :PROPERTIES:
