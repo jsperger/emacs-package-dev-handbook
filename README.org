@@ -79,7 +79,7 @@ You can read this Org file directly on the [[https://github.com/alphapapa/emacs-
   ;; Author: Adam Porter <adam@alphapapa.net>
   ;; Keywords: convenience, development
   ;; URL: https://github.com/alphapapa/emacs-package-dev-handbook
-  ;; Package-Requires: ((emacs "25.1") (map "2.1") (dash "2.13") (s "1.10.0"))
+  ;; Package-Requires: ((emacs "26.1") (map "2.1") (dash "2.13") (s "1.10.0"))
 
   ;;; License:
 
