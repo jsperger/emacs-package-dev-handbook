@@ -1590,13 +1590,14 @@ Byte-compile and load all elisp files in ~DIRECTORY~.  Interactively, directory 
   Interactively, directory defaults to `default-directory' and asks
   for confirmation."
     (interactive (list default-directory))
-    (if (or (not (called-interactively-p))
+    (if (or (not (called-interactively-p 'any))
             (yes-or-no-p (format "Compile and load all files in %s?" directory)))
         ;; Not sure if binding `load-path' is necessary.
         (let* ((load-path (cons directory load-path))
                (files (directory-files directory 't (rx ".el" eos))))
           (dolist (file files)
-            (byte-compile-file file 'load)))))
+            (when (byte-compile-file file)
+              (load (byte-compile-dest-file file)))))))
 #+END_SRC
 
 **** =emacs-lisp-macroreplace=
@@ -1624,7 +1625,9 @@ Replace macro form before or after point with its expansion.
                           (prog1 (read (current-buffer))
                             (setq end (point))))))
               (expansion (macroexpand-all form)))
-        (setf (buffer-substring beg end) (pp-to-string expansion))
+        (progn
+          (delete-region beg end)
+          (insert (pp-to-string expansion)))
       (user-error "Unable to expand")))
 #+END_SRC
 
