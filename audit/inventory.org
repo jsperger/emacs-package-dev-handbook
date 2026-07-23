@@ -10,63 +10,88 @@ Status values: TODO → IN-PROGRESS → DONE (or N/A).
 
 | Topic | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
 |-------+------+-----------------------+--------------------+----------------------+-----------------|
-| Animations / Screencasts | 114 | TODO | TODO | TODO | TODO |
-| Asynchronicity | 164 | TODO | TODO | TODO | TODO |
-| Auditing / Reviewing | 171 | TODO | TODO | TODO | TODO |
-| Binding | 186 | TODO | TODO | TODO | TODO |
-| Buffers | 259 | TODO | TODO | TODO | TODO |
-| Checkers / linters | 377 | TODO | TODO | TODO | TODO |
-| Collections (lists, vectors, hash-tables, etc.) | 407 | TODO | TODO | TODO | TODO |
-| Color | 900 | TODO | TODO | TODO | TODO |
-| Data structure | 924 | TODO | TODO | TODO | TODO |
-| Date / Time | 1034 | TODO | TODO | TODO | TODO |
-| Debugging | 1150 | TODO | TODO | TODO | TODO |
-| Destructuring | 1310 | TODO | TODO | TODO | TODO |
-| Documentation | 1317 | TODO | TODO | TODO | TODO |
-| Editing | 1324 | TODO | TODO | TODO | TODO |
-| General | 1459 | TODO | TODO | TODO | TODO |
-| Highlighting / font-locking | 1646 | TODO | TODO | TODO | TODO |
-| Multiprocessing (generators, threads) | 1719 | TODO | TODO | TODO | TODO |
-| Networking | 1779 | TODO | TODO | TODO | TODO |
-| Packaging | 1830 | TODO | TODO | TODO | TODO |
-| Pattern matching | 2473 | TODO | TODO | TODO | TODO |
-| Processes (incl. IPC, RPC) | 2674 | TODO | TODO | TODO | TODO |
-| Optimization | 2695 | TODO | TODO | TODO | TODO |
-| Refactoring | 3308 | TODO | TODO | TODO | TODO |
-| Regular expressions | 3324 | TODO | TODO | TODO | TODO |
-| Strings | 3446 | TODO | TODO | TODO | TODO |
-| Testing | 3509 | TODO | TODO | TODO | TODO |
-| User interface | 3689 | TODO | TODO | TODO | TODO |
-| Version control | 3850 | TODO | TODO | TODO | TODO |
-| XML / HTML | 3864 | TODO | TODO | TODO | TODO |
+| Animations / Screencasts | 114 | DONE | TODO | TODO | TODO |
+| Asynchronicity | 164 | DONE | TODO | TODO | TODO |
+| Auditing / Reviewing | 171 | DONE | TODO | TODO | TODO |
+| Binding | 186 | DONE | TODO | TODO | TODO |
+| Buffers | 259 | DONE | TODO | TODO | TODO |
+| Checkers / linters | 377 | DONE | TODO | TODO | TODO |
+| Collections (lists, vectors, hash-tables, etc.) | 407 | DONE [1] | TODO | TODO [1] | TODO |
+| Color | 900 | DONE | TODO | TODO | TODO |
+| Data structure | 924 | DONE | TODO | TODO | TODO |
+| Date / Time | 1034 | DONE | TODO | TODO | TODO |
+| Debugging | 1150 | DONE | TODO | TODO | TODO |
+| Destructuring | 1310 | DONE | TODO | TODO | TODO |
+| Documentation | 1317 | DONE | TODO | TODO | TODO |
+| Editing | 1324 | DONE | TODO | TODO | TODO |
+| General | 1459 | DONE [2] | TODO | TODO | TODO |
+| Highlighting / font-locking | 1646 | DONE | TODO | TODO | TODO |
+| Multiprocessing (generators, threads) | 1719 | DONE | TODO | TODO | TODO |
+| Networking | 1779 | DONE | TODO | TODO | TODO |
+| Packaging | 1830 | DONE [3] | TODO | TODO | TODO |
+| Pattern matching | 2473 | DONE [4] | TODO | TODO | TODO |
+| Processes (incl. IPC, RPC) | 2674 | DONE | TODO | TODO | TODO |
+| Optimization | 2695 | DONE [5] | TODO | TODO | TODO |
+| Refactoring | 3308 | DONE | TODO | TODO | TODO |
+| Regular expressions | 3324 | DONE | TODO | TODO | TODO |
+| Strings | 3446 | DONE | TODO | TODO | TODO |
+| Testing | 3509 | DONE | TODO | TODO | TODO |
+| User interface | 3689 | DONE | TODO | TODO | TODO |
+| Version control | 3850 | DONE | TODO | TODO | TODO |
+| XML / HTML | 3864 | DONE | TODO | TODO | TODO |
+
+[1] Collections: =cl-evenp= in benchmark code is deprecated in Emacs
+31 (renamed to =evenp=) but not yet marked obsolete.  Deferred to
+Phase 5 (benchmarks) since changing it would alter benchmark results.
+
+[2] General: Fixed =called-interactively-p= (added required ='any=
+argument), =byte-compile-file= (removed obsolete ='load= argument),
+=buffer-substring= as obsolete generalized variable (replaced with
+=delete-region= + =insert=).  Added =(require 'warnings)= to silence
+free-variable warning.  Bumped =Package-Requires= from Emacs 25.1 to
+26.1 (code uses =if-let*=).
+
+[3] Packaging: No deprecated references found.  The =Package-Requires:
+((emacs "25.2"))= in the example template is illustrative, not a claim
+about the handbook's code.
+
+[4] Pattern matching: Replaced obsolete =labels= with =cl-labels= and
+=loop= with =cl-loop= in =with-dict= and =with-plist-vals= code
+examples.
+
+[5] Optimization: Reflowed =bench= docstring (was wider than 80
+characters).  Replaced bare CL accessors =second=/=third=/=fourth=
+with =cl-second=/=cl-third=/=cl-fourth= in =bench-multi= and
+=bench-multi-process-results=.  Fixed =byte-compile-file= 2-arg
+calling convention in =bench-multi-lexical=.
 
 * Blogs
 
 | Blog | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
 |------+------+-----------------------+--------------------+----------------------+-----------------|
-| Planet Emacsen | 4102 | TODO | N/A | N/A | TODO |
-| Sacha Chua's Emacs News | 4106 | TODO | N/A | N/A | TODO |
-| Artur Malabarba's Endless Parentheses | 4110 | TODO | N/A | N/A | TODO |
-| Irreal | 4112 | TODO | N/A | N/A | TODO |
-| Oleh Krehel's (or emacs) | 4116 | TODO | N/A | N/A | TODO |
-| Sacha Chua's Living an Awesome Life | 4121 | TODO | N/A | N/A | TODO |
+| Planet Emacsen | 4102 | DONE | N/A | N/A | TODO |
+| Sacha Chua's Emacs News | 4106 | DONE | N/A | N/A | TODO |
+| Artur Malabarba's Endless Parentheses | 4110 | DONE | N/A | N/A | TODO |
+| Irreal | 4112 | DONE | N/A | N/A | TODO |
+| Oleh Krehel's (or emacs) | 4116 | DONE | N/A | N/A | TODO |
+| Sacha Chua's Living an Awesome Life | 4121 | DONE | N/A | N/A | TODO |
 
 * People
 
 | Person | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
 |--------+------+-----------------------+--------------------+----------------------+-----------------|
-| Anders Lindgren | 4149 | TODO | TODO | N/A | TODO |
-| Artur Malabarba | 4178 | TODO | TODO | N/A | TODO |
-| Chris Wellons | 4199 | TODO | TODO | N/A | TODO |
-| Damien Cassou | 4215 | TODO | TODO | N/A | TODO |
-| Henrik Lissner | 4228 | TODO | TODO | N/A | TODO |
-| John Wiegley | 4248 | TODO | TODO | N/A | TODO |
-| Jonas Bernoulli | 4262 | TODO | TODO | N/A | TODO |
-| Jorgen Schäfer | 4275 | TODO | TODO | N/A | TODO |
-| Magnar Sveen | 4290 | TODO | TODO | N/A | TODO |
-| Matus Goljer | 4308 | TODO | TODO | N/A | TODO |
-| Oleh Krehel | 4325 | TODO | TODO | N/A | TODO |
-| Phil Lord | 4343 | TODO | TODO | N/A | TODO |
-| Roland Walker | 4356 | TODO | TODO | N/A | TODO |
-| Sacha Chua | 4370 | TODO | TODO | N/A | TODO |
-| Wilfred Hughes | 4381 | TODO | TODO | N/A | TODO |
+| Anders Lindgren | 4149 | DONE | TODO | N/A | TODO |
+| Artur Malabarba | 4178 | DONE | TODO | N/A | TODO |
+| Chris Wellons | 4199 | DONE | TODO | N/A | TODO |
+| Damien Cassou | 4215 | DONE | TODO | N/A | TODO |
+| Henrik Lissner | 4228 | DONE | TODO | N/A | TODO |
+| John Wiegley | 4248 | DONE | TODO | N/A | TODO |
+| Jonas Bernoulli | 4262 | DONE | TODO | N/A | TODO |
+| Jorgen Schäfer | 4275 | DONE | TODO | N/A | TODO |
+| Magnar Sveen | 4290 | DONE | TODO | N/A | TODO |
+| Matus Goljer | 4308 | DONE | TODO | N/A | TODO |
+| Oleh Krehel | 4325 | DONE | TODO | N/A | TODO |
+| Phil Lord | 4343 | DONE | TODO | N/A | TODO |
+| Roland Walker | 4356 | DONE | TODO | N/A | TODO |
+| Sacha Chua | 4370 | DONE | TODO | N/A | TODO |
+| Wilfred Hughes | 4381 | DONE | TODO | N/A | TODO |
