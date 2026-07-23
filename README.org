@@ -2640,9 +2640,9 @@ Courtesy of [[id:9391ab92-5d51-4786-a3c5-4822ec500500][John Kitchin]]:[fn:1:Copy
                   (symbol-value key-vals)
                 key-vals))
            (keys (-slice g 0 nil 2)))
-      `(labels ,(loop for key in keys
-                      collect
-                      (list key '() `(plist-get ',g ,key)))
+      `(cl-labels ,(cl-loop for key in keys
+                            collect
+                            (list key '() `(plist-get ',g ,key)))
          ,@body)))
 
   ;; Used as:
@@ -2661,7 +2661,7 @@ And:
   (defmacro with-plist-vals (plist &rest body)
     "Bind the values of a plist to variables with the name of the keys."
     (declare (indent 1))
-    `(let ,(loop for key in (-slice plist 0 nil 2)
+    `(let ,(cl-loop for key in (-slice plist 0 nil 2)
                  for val in (-slice plist 1 nil 2)
                  collect (list (intern
                                 (substring (symbol-name key) 1))
