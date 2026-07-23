@@ -2855,7 +2855,8 @@ From Phil Lord's [[http://phillord.github.io/m-buffer-el/#sec-5-1-2][m-buffer-el
 #+BEGIN_SRC elisp :exports code :tangle epdh.el
   ;;;###autoload
   (cl-defmacro bench (&optional (times 100000) &rest body)
-    "Call `benchmark-run-compiled' on BODY with TIMES iterations, returning list suitable for Org source block evaluation.
+    "Call `benchmark-run-compiled' on BODY with TIMES iterations.
+  Return list suitable for Org source block evaluation.
   Garbage is collected before calling `benchmark-run-compiled' to
   avoid counting existing garbage which needs collection."
     (declare (indent defun))
@@ -2941,7 +2942,7 @@ These macros make comparing multiple forms easy:
                                                                                   `(puthash ,description ,form bench-multi-results)
                                                                                 form))))))
                                          (lambda (a b)
-                                           (< (second a) (second b))))))
+                                           (< (cl-second a) (cl-second b))))))
                ,(when ensure-equal
                   `(cl-loop with ,keys = (hash-table-keys bench-multi-results)
                             for i from 0 to (- (length ,keys) 2)
@@ -2974,19 +2975,19 @@ These macros make comparing multiple forms easy:
 
   (defun bench-multi-process-results (results)
     "Return sorted RESULTS with factors added."
-    (setq results (sort results (-on #'< #'second)))
+    (setq results (sort results (-on #'< #'cl-second)))
     (cl-loop with length = (length results)
              for i from 0 below length
              for description = (car (nth i results))
              for factor = (pcase i
                             (0 "fastest")
-                            (_ (format "%.2f" (/ (second (nth i results))
-                                                 (second (nth 0 results))))))
+                            (_ (format "%.2f" (/ (cl-second (nth i results))
+                                                 (cl-second (nth 0 results))))))
              collect (append (list description factor)
-                             (list (format "%.6f" (second (nth i results)))
-                                   (third (nth i results))
-                                   (if (> (fourth (nth i results)) 0)
-                                       (format "%.6f" (fourth (nth i results)))
+                             (list (format "%.6f" (cl-second (nth i results)))
+                                   (cl-third (nth i results))
+                                   (if (> (cl-fourth (nth i results)) 0)
+                                       (format "%.6f" (cl-fourth (nth i results)))
                                      0)))))
 #+END_SRC
 
@@ -3098,9 +3099,11 @@ To evaluate forms with lexical binding enabled, use this macro:
                  (format "(defun %s () (bench-multi :times %d :ensure-equal %s :raw %s :forms %S))"
                          fn ,times ,ensure-equal ,raw ',forms)))
        (unwind-protect
-           (if (byte-compile-file temp-file 'load)
-               (funcall (intern (symbol-name fn)))
-             (user-error "Error byte-compiling and loading temp file"))
+           (if (byte-compile-file temp-file)
+               (progn
+                 (load (byte-compile-dest-file temp-file))
+                 (funcall (intern (symbol-name fn))))
+             (user-error "Error byte-compiling temp file"))
          (delete-file temp-file)
          (unintern (symbol-name fn) nil))))
 #+END_SRC
