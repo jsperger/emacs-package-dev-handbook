@@ -1498,6 +1498,28 @@ The editor of this handbook uses ~iedit~ with these customizations:
 
 This is the built-in =cl-lib= package which implements Common Lisp functions and control structures for Emacs Lisp.
 
+***** Emacs 31 renames
+
+In Emacs 31, several =cl-lib= functions and macros are being renamed to bare names, moving them into the core language:
+
+| Old name       | New name    | Status in Emacs 31 |
+|----------------+-------------+--------------------|
+| =cl-incf=      | =incf=      | deprecated         |
+| =cl-decf=      | =decf=      | deprecated         |
+| =cl-oddp=      | =oddp=      | deprecated         |
+| =cl-evenp=     | =evenp=     | deprecated         |
+| =cl-plusp=     | =plusp=     | deprecated         |
+| =cl-minusp=    | =minusp=    | deprecated         |
+| =cl-member-if= | =member-if= | obsolete           |
+
+=cl-member-if= is marked obsolete; the others are deprecated and will be marked obsolete in a future release.  New code should use the bare names.  See [[https://www.gnu.org/software/emacs/manual/html_node/cl/index.html][the CL manual]] for details.
+
+Additionally, =cl-locally=, =cl-declare=, and =cl-gensym= are now obsolete; use =gensym= and =defvar= instead.
+
+***** Macro-writing macros
+
+Emacs 29 added =cl-with-gensyms= and =cl-once-only=, which simplify writing hygienic macros.  See [[https://www.gnu.org/software/emacs/manual/html_node/cl/Macro_002dWriting-Macros.html][the CL manual section on Macro-Writing Macros]].
+
 **** [[https://github.com/magnars/dash.el][dash.el]]                                                        :dash:
 :PROPERTIES:
 :ID:       e85e4252-ea03-4473-b52f-9393e7527fad
@@ -1529,6 +1551,77 @@ This is a built-in package that provides several useful functions and macros, su
 #+BEGIN_QUOTE
 Do not document these functions in the lispref.  http://lists.gnu.org/archive/html/emacs-devel/2014-01/msg01006.html
 #+END_QUOTE
+
+**** Modern binding and flow-control macros              :built_in:flow_control:
+:PROPERTIES:
+:CUSTOM_ID: modern-binding-and-flow-control-macros
+:END:
+
+Emacs 28–31 added several macros that improve on older patterns:
+
+- =if-let*=, =when-let*=, =and-let*= (Emacs 26+, but =if-let= and =when-let= are [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][now obsolete in Emacs 31]]): bind variables conditionally with a cleaner syntax than the old single-binding =if-let=/=when-let= forms.
+- =while-let= (Emacs 29): like =when-let=, but repeats until a binding form evaluates to nil.  Replaces many =while= + =pop= / =while= + =setq= patterns.
+
+#+BEGIN_SRC elisp :exports code
+  ;; Instead of:
+  (while (setq item (pop list))
+    (process item))
+
+  ;; You can write:
+  (while-let ((item (pop list)))
+    (process item))
+#+END_SRC
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
+
+**** =static-if=, =static-when=, =static-unless=       :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: static-if-static-when-static-unless
+:END:
+
+Added in Emacs 30 (=static-if=) and Emacs 31 (=static-when=, =static-unless=), these macros evaluate their condition at macro-expansion time and hide the untaken branch from the evaluator and byte-compiler.  They are handy for writing code that works across Emacs versions without triggering byte-compiler warnings about functions that don't exist in the target version.
+
+#+BEGIN_SRC elisp :exports code
+  (static-if (fboundp 'new-function)
+      (new-function arg)
+    (old-function arg))
+#+END_SRC
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
+
+**** =handler-bind=                                    :built_in:errors:
+:PROPERTIES:
+:CUSTOM_ID: handler-bind
+:END:
+
+New in Emacs 30, =handler-bind= is like =condition-case= except it runs the handler code /without unwinding the stack/, so the backtrace and other dynamic state at the point of the error are preserved.  This is useful for debugging and for error handlers that need to inspect the error context.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Handling-Errors.html][the Elisp manual on Handling Errors]].
+
+**** =with-memoization=                                  :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: with-memoization
+:END:
+
+New in Emacs 29, =with-memoization= provides a simple form of memoization: it caches the result of a form in a variable and returns the cached value on subsequent calls.  Useful for expensive computations in functions that may be called repeatedly.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Memoization.html][the Elisp manual on Memoization]].
+
+**** =setopt=                                            :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: setopt
+:END:
+
+New in Emacs 29, =setopt= is like =setq= but is meant for user options: it uses =custom-set= / =set-default= to set them, which triggers any custom setters and applies any =:set= functions declared by =defcustom=.  Use it instead of =setq= when setting user options in init files or package code.
+
+Emacs 31 also added =setopt-local=, the buffer-local equivalent.
+
+**** =require-with-check=                                :built_in:loading:
+:PROPERTIES:
+:CUSTOM_ID: require-with-check
+:END:
+
+New in Emacs 30, =require-with-check= is like =require=, but it checks whether the feature is already loaded and, if so, verifies that the loaded file is not shadowed by a different version in =load-path=.  It either signals an error or forcibly reloads the file.  Useful for detecting version conflicts during development.
 
 *** Tools                                                           :tools:
 :PROPERTIES:
