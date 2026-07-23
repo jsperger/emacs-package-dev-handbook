@@ -938,6 +938,12 @@ Emacs 31 added several built-in list functions that previously required =dash= o
 - =all=, =any=: Return non-nil if all / any elements satisfy a predicate.
 - =equal= now compares circular lists without signaling an error.
 
+Emacs 28 also added these commonly used utilities:
+
+- =ensure-list=: If the argument is a list, return it; otherwise, return a single-element list.  Replaces the common =(if (listp x) x (list x))= pattern.
+- =length<=, =length>=, =length==: Efficient length comparison predicates that avoid consing.
+- =always=: Like =ignore= but returns t; useful as a callback.
+
 **** [[https://github.com/NicolasPetton/stream][stream: Lazy sequences]]                       :streams:sequences:lazy:
 
 #+BEGIN_QUOTE
@@ -1654,6 +1660,8 @@ In Emacs 31, several =cl-lib= functions and macros are being renamed to bare nam
 
 Additionally, =cl-locally=, =cl-declare=, and =cl-gensym= are now obsolete; use =gensym= and =defvar= instead.
 
+In Emacs 30, =defadvice= was marked obsolete; use =advice-add= or =define-advice= instead.
+
 ***** Macro-writing macros
 
 Emacs 29 added =cl-with-gensyms= and =cl-once-only=, which simplify writing hygienic macros.  See [[https://www.gnu.org/software/emacs/manual/html_node/cl/Macro_002dWriting-Macros.html][the CL manual section on Macro-Writing Macros]].
@@ -1708,6 +1716,23 @@ Emacs 28–31 added several macros that improve on older patterns:
   ;; You can write:
   (while-let ((item (pop list)))
     (process item))
+#+END_SRC
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
+
+**** =named-let= (Emacs 28)                              :built_in:flow_control:
+:PROPERTIES:
+:CUSTOM_ID: named-let
+:END:
+
+New in Emacs 28, =named-let= provides Scheme-style named-let looping: it binds a function name that can be called recursively to iterate, with arguments as loop variables.  It is often clearer than =cl-loop= for simple recursive iteration.
+
+#+BEGIN_SRC elisp :exports code
+  (named-let loop ((i 0) (acc nil))
+    (if (>= i 5)
+        (nreverse acc)
+      (loop (1+ i) (cons i acc))))
+  ;; => (0 1 2 3 4)
 #+END_SRC
 
 See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
@@ -2878,8 +2903,9 @@ This example shows the use of =pcase-let*= to destructure and bind a nested alis
       (list letter second)))  ;; => ("a" "b")
 #+END_SRC
 
-***** Recent pcase changes (Emacs 30–31)
+***** Recent pcase changes (Emacs 28–31)
 
+- Emacs 28: =or= patterns now bind the union of variables from all branches.  New =(pred (not FUN))= pattern.  New =cl-type= pattern for CLOS type checking.  New =pcase-setq= macro.
 - Emacs 30: Functions in =pred= and =app= patterns can now specify the argument position explicitly.  For example, =(pred (> _ 5))= is equivalent to the old =(pred (< 5))=, and is often clearer.
 - Emacs 31: Nested backquotes are no longer supported in pcase patterns.  Code using nested backquote patterns must be rewritten.
 
@@ -3848,7 +3874,7 @@ Chris Wellons explains how to build strings in several steps.  This is achieved 
 
 Emacs 28–31 added many string functions that previously required =s.el= or hand-rolled code:
 
-- Emacs 28: =string-pad=, =string-truncate-left=, =string-chop-newline=, =string-split=, =string-lines= (improved).
+- Emacs 28: =string-search=, =string-replace= (fixed-string search/replace without regexp or match-data side effects), =string-pad=, =string-truncate-left=, =string-chop-newline=, =string-split=, =string-lines= (improved), =string-clean-whitespace=, =string-fill=, =string-limit=.
 - Emacs 29: =string-equal-ignore-case=.
 - Emacs 31: =string-pixel-width= now takes an optional BUFFER argument for face-remapping awareness; new =truncate-string-pixelwise= truncates by pixel width; =replace-region-contents= was promoted to C and now accepts a string or buffer directly (passing a function is deprecated).
 
@@ -3959,6 +3985,7 @@ This is the standard, built-in Emacs testing library, used by core code and thir
 ***** Recent ERT improvements (Emacs 29–31)
 
 - Emacs 29: New variables =ert-batch-print-length= and =ert-batch-print-level= control printing of Lisp values in batch test results.  Redefining an ERT test in batch mode now signals an error, catching duplicate test names.
+- Emacs 29: ERT can produce JUnit XML test reports via the =EMACS_TEST_JUNIT_REPORT= environment variable, enabling CI/CD integration.
 - Emacs 29: New =ert-test-erts-file= function and =erts-mode= allow testing buffer actions (indentation, fontification, etc.) from declarative =.erts= files.  See [[https://www.gnu.org/software/emacs/manual/html_node/ert/erts.html][the ERT manual on ERTS]].
 - Emacs 31: The macros =ert-with-test-buffer=, =ert-with-buffer-selected=, and =ert-with-buffer-renamed=, previously experimental in =ert-x=, are now stable and moved to =ert= itself.
 - Emacs 31: New =ert-play-keys= function sends keys to interactive input during tests, complementing =ert-simulate-keys=.
