@@ -94,3 +94,36 @@ Apply at the end of every phase (and to any milestone-sized merge into =develop=
 - [ ] Work reached =develop= via a feature branch; =master= is untouched and still matches =upstream/master=.
 - [ ] Commit messages follow the =Prefix: description= convention.
 - [ ] Full diff read-through done; no unrelated churn (whitespace, export noise, ToC-only rewrites) mixed into content commits.
+
+* Operational notes (from Phases 0–1)
+
+Practical lessons that affect how later phases should be executed.
+See also =NOTES.org= for the full write-up.
+
+** Verification workflow
+- After editing tangled src blocks: tangle, byte-compile, verify zero
+  new warnings, then =git checkout -- epdh.el= to restore the
+  committed file.  Never commit regenerated =epdh.el= or =index.html=.
+- Byte-compile a /freshly tangled/ =epdh.el=, not the committed one —
+  they can differ.
+- The byte-compiler enforces advertised calling conventions stricter
+  than runtime; trust compiler warnings over =func-arity=.
+
+** Reference material
+- NEWS files cover one major version each (NEWS.29 = Emacs 29, etc.).
+  No NEWS.28 exists; Emacs 28 changes are in
+  =mastering-emacs-whats-new-28-1.md=.
+- =mastering-emacs-whats-new-301.md= was fetched from
+  https://www.masteringemacs.org/article/whats-new-in-emacs-301 ;
+  no mastering-emacs article for Emacs 31 exists yet.
+- =references/emacs-info= (Emacs 31 info manuals) is authoritative for
+  verifying current behavior.  Check it before writing any replacement
+  or new content.
+
+** Deferred items tracker
+- Phase 5: =cl-evenp= in Collections benchmarks (deprecated → =evenp=
+  in Emacs 31, not yet obsolete; changing alters benchmark results).
+- Phase 6: 22 =archive.today= links returned 429 (rate-limited) in the
+  Phase 0 baseline; need manual spot-checking or retry with delays.
+- Phase 4: =chemacs= quote about =~/.emacs.d= hard-coding is less true
+  with =--init-directory= (Emacs 27+).

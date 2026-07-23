@@ -7,3 +7,74 @@
 :END:
 
 Maybe something like =elispedia= or =emacs-lisp-almanac=.
+
+* Lessons learned (Phases 0–1)
+
+** Pipeline and tooling
+
+- The project-local Emacs config (=emacs.d/=) works well for batch
+  operations.  One-shots via =emacs --batch --init-directory=emacs.d
+  -l emacs.d/init.el= are reliable and reproducible.
+- First launch bootstraps packages into =emacs.d/elpa/= (needs
+  network).  Subsequent runs are offline.
+- macOS =grep= lacks =-P= (PCRE); use =python3= for complex text
+  extraction (e.g. the link checker in =audit/check-links.py=).
+- =archive.today= / =archive.ph= / =archive.vn= rate-limit
+  aggressively (HTTP 429).  The Phase 0 link baseline has 22
+  "unknown" links that need manual spot-checking or a retry with
+  longer delays in Phase 6.
+
+** Byte-compilation
+
+- The Emacs 31 byte-compiler enforces "advertised" calling
+  conventions even when functions technically accept more/fewer
+  arguments at runtime.  E.g. =byte-compile-file= still has
+  =&optional LOAD= in its arglist, but the byte-compiler rejects
+  the 2-arg form.  Similarly =called-interactively-p= accepts 0
+  args at runtime but the compiler requires 1.
+- Bare CL accessors (=second=, =third=, =fourth=) are /not/ defined
+  by =(require 'cl-lib)= — they come from the old =cl= library.
+  Use =cl-second=, =cl-third=, =cl-fourth=.
+- In Emacs 31, some =cl-= functions are being renamed to bare names
+  (=cl-incf= → =incf=, =cl-evenp= → =evenp=), but most accessors
+  (=cl-second=, =cl-third=) have /not/ been renamed yet.  Only
+  =cl-member-if= is marked obsolete so far.
+- Built-in libraries that are always loaded at runtime (e.g.
+  =warnings=) may still need explicit =(require ...)= for the
+  byte-compiler to see their definitions.
+- When auditing byte-compile warnings, run the compilation on a
+  /freshly tangled/ =epdh.el=, not just the committed one — the
+  committed file may differ from what tangles now.
+
+** Content editing
+
+- Code examples in the handbook (not just tangled blocks) should use
+  modern forms.  Obsolete =labels= / =loop= in example code teaches
+  bad habits even if it "still works."
+- =Package-Requires= minimums must match actual feature usage.
+  =if-let*= requires Emacs 26.1; the header said 25.1.
+- When modifying tangled src blocks, tangle + byte-compile to
+  verify, then =git checkout -- epdh.el= to restore the committed
+  version.  Never commit a regenerated =epdh.el= or =index.html=
+  as a side effect.
+- PR review feedback (e.g. Copilot) can catch real bugs in code
+  being modified — the =.elc= temp file leak in =bench-multi-lexical=
+  was pre-existing but surfaced by the change.
+
+** Reference material
+
+- =references/emacs-info= (symlink to installed Emacs 31 info
+  manuals) is the authoritative source for verifying current
+  documented behavior.  Always check it before writing a
+  replacement.
+- NEWS files cover one major version each: NEWS.29 = Emacs 29
+  changes, NEWS.30 = Emacs 30, NEWS.31 = Emacs 31.  There is no
+  NEWS.28; Emacs 28 changes are covered by
+  =mastering-emacs-whats-new-28-1.md=.
+- =mastering-emacs-whats-new-301.md= was fetched from
+  https://www.masteringemacs.org/article/whats-new-in-emacs-301
+  using =markitdown=.  There is no mastering-emacs article for
+  Emacs 31 yet.
+- The mastering-emacs articles are good high-level summaries for
+  triaging which NEWS entries matter; the NEWS files themselves are
+  the exhaustive source.
