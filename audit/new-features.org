@@ -1,0 +1,331 @@
+#+TITLE: Phase 2 — New-Feature Triage
+#+DATE: 2026-07-23
+
+Triaged candidate features from Emacs 28–31 for package-development
+relevance.  Sources: NEWS.29, NEWS.30, NEWS.31,
+mastering-emacs-whats-new-{28,29,30,301}.md, verified against
+references/emacs-info (Emacs 31.0.90).
+
+Status: INCLUDE → will be added to README.org.
+        EXCLUDE → not package-dev relevant (reason given).
+
+* Included features by topic
+
+** Binding
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =keymap-set=, =keymap-global-set=, =keymap-local-set=, etc. | NEWS.29 ~3870 | New preferred keymap API; package authors should use these over =define-key=, =global-set-key= |
+| =defvar-keymap= macro | NEWS.29 ~3920 | Concise keymap variable definition with =:repeat= support |
+| =define-keymap= function | NEWS.29 ~3910 | Define multiple keystrokes in one form |
+| =key-valid-p=, =key-parse= | NEWS.29 ~3900 | Stricter key syntax validation |
+| =defvar-keymap= =:prefix t= option | NEWS.31 ~4620 | Abbreviation for prefix command keymaps |
+| =repeat-continue= symbol property | NEWS.31 ~4600 | Extended =repeat-mode= support for package keymaps |
+
+** Buffers
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =buffer-match-p=, =match-buffers= | NEWS.29 ~3810 | Declarative buffer matching; useful for package configuration |
+| =with-restriction=, =without-restriction= | NEWS.29 ~3520 | Enhanced =save-restriction= with labeled narrowing |
+| =buffer-local-set-state= macro | NEWS.29 ~3680 | Helper for minor modes to restore buffer-local variables |
+| =with-buffer-unmodified-if-unchanged= | NEWS.29 ~3690 | Preserve unmodified state when net change is zero |
+| =with-work-buffer= macro | NEWS.31 ~4530 | Reusable temp buffers (avoids allocation per call) |
+| =set-local=, =setopt-local= | NEWS.31 ~4380 | Buffer-local =set=/=setopt= equivalents |
+
+** Checkers / linters
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| New byte-compilation warnings (Emacs 30) | NEWS.30 ~2350 | Many new warnings: missing =lexical-binding=, empty bodies, quoted error names, =eq= with literals, =condition-case= without handlers, =unwind-protect= without unwind, useless =cond= clauses, constant mutation, ignored return values, control chars in docstrings |
+| =byte-compile-cond-use-jump-table= obsolete | NEWS.31 ~744 | Package authors should stop setting this |
+| Warn about missing =lexical-binding= directive | NEWS.30 ~2360 | Compiler now warns; package authors must add the cookie |
+
+** Collections
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =seq-split= | NEWS.29 ~3600 | Split sequences into sub-sequences |
+| =seq-keep= | NEWS.29 ~3610 | =seq-map= that removes nil results |
+| =seq-positions= | NEWS.29 ~3605 | Find indices matching a predicate |
+| =seq-remove-at-position= | NEWS.29 ~3600 | Remove element at index |
+| =plist-get=/=plist-put=/=plist-member= PREDICATE arg | NEWS.29 ~3550 | No longer limited to =eq= comparison |
+| New =sort= keyword arguments (=:key=, =:lessp=, =:reverse=, =:in-place=) | NEWS.30 ~2240 | Major sort API improvement; sorts a copy by default |
+| =value<= polymorphic comparison | NEWS.30 ~2230 | General-purpose ordering predicate |
+| =hash-table-contains-p= | NEWS.31 ~4440 | Check key presence in hash table |
+| =drop-while=, =take-while= | NEWS.31 ~4410 | Predicate-based =drop=/=take= |
+| =all=, =any= | NEWS.31 ~4415 | List predicates (all/any elements satisfy predicate) |
+| =equal= handles circular lists | NEWS.31 ~4420 | No longer signals =circular-list= error |
+| Hash-table =:rehash-size=/=:rehash-threshold= no-op | NEWS.30 ~2640 | These args are now ignored; package code can drop them |
+| Obarray type changes | NEWS.30 ~2660 | Opaque type; =obarray-make= preferred; =obarray-clear= new |
+| =drop= alias for =nthcdr= | NEWS.30 ~2225 | New alias |
+
+** Color
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =color-blend= | NEWS.31 ~4460 | Blend two RGB colors; useful for theme-aware packages |
+
+** Data structure
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| OClosures (=oclosure-define=, =oclosure-lambda=) | NEWS.29 ~2960 | "Functions with slots"; new extensible function type |
+
+** Date / Time
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =seconds-to-string= formatting options | NEWS.31 ~4450 | Human-readable duration strings |
+
+** Debugging
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =handler-bind= special form | NEWS.30 ~2190 | Like =condition-case= but without unwinding; preserves backtrace |
+| Error descriptor API (=error-type-p=, =error-type=, =error-has-type-p=, =error-slot-value=) | NEWS.31 ~4320 | Improved error inspection; =(signal err)= shorthand |
+| =debug= in batch no longer kills Emacs | NEWS.31 ~4090 | Safer debugging in batch scripts |
+
+** General
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =cl-lib= renames: =cl-incf=→=incf=, =cl-decf=→=decf=, =cl-oddp=→=oddp=, =cl-evenp=→=evenp=, =cl-plusp=→=plusp=, =cl-minusp=→=minusp=, =cl-member-if=→=member-if= | NEWS.31 ~1835 | Major cl-lib modernization; =cl-member-if= marked obsolete |
+| =cl-locally=, =cl-declare=, =cl-gensym= obsolete | NEWS.31 ~1858 | Use =gensym=, =defvar= instead |
+| =cl-with-gensyms=, =cl-once-only= | NEWS.29 ~3740 | New macro-writing macros |
+| =if-let=/=when-let= obsolete (use =if-let*=, =when-let*=, =and-let*=) | NEWS.31 ~4170 | Old single-binding syntax obsoleted |
+| =while-let= macro | NEWS.29 ~3480 | =when-let= that repeats until nil |
+| =with-memoization= macro | NEWS.29 ~3570 | Simple memoization primitive |
+| =setopt= macro | NEWS.29 ~3750 | =setq= for user options (uses =custom-set=) |
+| =static-if=, =static-when=, =static-unless= | NEWS.30 ~2290, NEWS.31 ~4340 | Compile-time conditional evaluation; version-compatible code |
+| =require-with-check= | NEWS.30 ~2200 | Detect shadowed feature versions |
+| =cl-type-of=, =primitive-function-p=, =cl-functionp= | NEWS.30 ~2160 | More precise type predicates |
+| =closurep=, =interpreted-function-p=, =make-interpreted-closure= | NEWS.30 ~2150 | New function types |
+| =derived-mode-p= single-arg; =derived-mode-add-parents= | NEWS.30 ~2260 | New major-mode graph API |
+| =defvar-local= optional second arg | NEWS.31 ~4425 | Now works like =defvar= with one arg |
+| =defvar-keymap= =:prefix t= | NEWS.31 ~4620 | (also in Binding) |
+| =interactive= "R" code letter | NEWS.31 ~4630 | Region begin/end, nil if inactive |
+| =pp-emacs-lisp-code= | NEWS.29 ~3790 | Pretty-print Elisp code (vs. general sexps) |
+| =current-cpu-time= | NEWS.29 ~3700 | CPU time for benchmarking |
+| =readablep= | NEWS.29 ~3770 | Check if object is readable |
+| =function-alias-p= | NEWS.29 ~3800 | Detect function alias chains |
+| =lisp-directory= variable | NEWS.29 ~3810 | Directory of Emacs's own Lisp files |
+| =multisession-value= | NEWS.29 ~3815 | Persistent application state across sessions |
+| Lexical binding: default changeable, warning for missing cookie, =--script= uses lexical | NEWS.31 ~4360 | Important dialect changes for package authors |
+| =load-path-filter-function= caching | NEWS.31 ~4350 | Speed up =load-path= lookups |
+| =find-function-type-alist= property | NEWS.31 ~4610 | Help =find-function= locate macro-defined objects |
+| =completion-table-with-metadata= | NEWS.31 ~4610 | Concise completion table creation |
+| =cond*= macro | NEWS.31 ~4550 | Alternative to =cond= and =pcase= with pattern matching |
+
+** Highlighting / font-locking
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| New font-lock faces for tree-sitter | NEWS.29 ~815 | =font-lock-bracket-face=, =font-lock-delimiter-face=, =font-lock-escape-face=, =font-lock-function-call-face=, etc. |
+| Font-lock face variables obsolete | NEWS.31 ~136 | =font-lock-builtin-face= etc. variables obsolete; use face symbols directly |
+| =treesit-font-lock-rules= =:default-language= | NEWS.30 ~2620 | Simplified tree-sitter font-lock rules |
+
+** Networking
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| (no new package-dev-relevant features found) | | |
+
+** Optimization
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| Native-compilation maturity (Emacs 28) | mastering-emacs-28 | AOT compilation, =native-compile-prune-cache= |
+| =compilation-safety= user option | NEWS.30 ~2140 | Control native code safety; =safety= declare form |
+| =ftype= declare form | NEWS.30 ~2600 | Specify function types for native compiler |
+| =important-return-value= declare form | NEWS.30 ~2610 | Warn when return value is ignored |
+| =native-compile-directory= | NEWS.31 ~4470 | Batch native-compile a directory tree |
+| =native-comp-async-on-battery-power= | NEWS.31 ~765 | Control async native-comp on battery |
+| =garbage-collect-heapsize= | NEWS.31 ~4330 | GC info without collecting |
+| Interpreted closures "safe for space" | NEWS.29 ~3465 | Interpreted closures only capture needed environment |
+| Bytecode always loaded eagerly | NEWS.30 ~2340 | =byte-compile-dynamic= has no effect; =fetch-bytecode= obsolete |
+
+** Packaging
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =use-package= built-in (Emacs 29) | NEWS.29 ~2929 | Declarative package configuration shipped with Emacs |
+| =package-vc= (Emacs 29) | NEWS.29 ~1718 | Install packages from VC checkouts; =package-vc-install=, =package-vc-checkout=, =package-vc-prepare-patch= |
+| =package-vc-selected-packages= | NEWS.29 ~1738 | Declarative VC package selection |
+| =package-install-upgrade-built-in= | NEWS.29 ~2925 | Upgrade built-in packages from ELPA |
+| =lisp-mnt.el= (=lm=) | (already in guide) | Already listed; no changes needed |
+
+** Pattern matching
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =pcase= argument position in =pred=/=app= | NEWS.30 ~2180 | =(pred (> _ 5))= instead of =(pred (< 5))= |
+| =let-alist= list indexing (=.key.0=) | NEWS.31 ~4350 | Index into list values in alists |
+| =cond*= macro | NEWS.31 ~4550 | Alternative pattern matching (also in General) |
+| Nested backquotes removed from pcase | NEWS.31 ~4140 | Incompatible change; package code must adapt |
+
+** Strings
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =string-pad=, =string-truncate-left=, =string-chop-newline=, =string-split= (Emacs 28) | mastering-emacs-28 | New built-in string utilities (previously required =s.el=) |
+| =string-equal-ignore-case= | NEWS.29 ~3560 | Case-insensitive string comparison |
+| =string-pixel-width= BUFFER arg | NEWS.31 ~4520 | Face remapping awareness |
+| =truncate-string-pixelwise= | NEWS.31 ~4525 | Pixel-based string truncation |
+| =replace-region-contents= promoted to C | NEWS.31 ~4330 | Now accepts string/buffer directly; function arg deprecated |
+| String mutation restricted | NEWS.31 ~4120 | =aset= on strings now restricted; package code must adapt |
+
+** Testing
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| ERT: =ert-batch-print-length=, =ert-batch-print-level= | NEWS.29 ~934 | Control printing in batch test results |
+| ERT: redefining test in batch signals error | NEWS.29 ~938 | Catch duplicate test names |
+| =ert-test-erts-file=, =erts-mode= | NEWS.29 ~2970 | Test buffer actions from erts files |
+| ERT stable macros: =ert-with-test-buffer=, =ert-with-buffer-selected=, =ert-with-buffer-renamed= | NEWS.31 ~4430 | Moved from =ert-x= to =ert=; now stable |
+| =ert-play-keys= | NEWS.31 ~4440 | Send keys to interactive input in tests |
+
+** User interface
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =tabulated-list-groups= | NEWS.30 ~2680 | Group and sort entries in =tabulated-list-mode= |
+| =vtable= improvements (empty vtable) | NEWS.31 ~4580 | =make-vtable= can create empty vtables |
+
+** Version control
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| (no new package-dev-relevant features beyond package-vc, covered in Packaging) | | |
+
+** XML / HTML
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =dom-inner-text= | NEWS.31 ~4465 | Replace obsolete =dom-text=/=dom-texts= |
+
+** NEW: Tree-sitter
+
+| Feature | Source | Rationale |
+|---------+--------+-----------|
+| =treesit.el= API for package authors | NEWS.29 ~96 | Grammar authoring, =treesit-install-language-grammar=, parser management |
+| Tree-sitter major modes | NEWS.29 ~2980 | =*-ts-mode= conventions; =major-mode-remap-alist= |
+| =treesit-font-lock-rules= | NEWS.29, NEWS.30 | Font-lock integration for package authors |
+| =treesit-simple-imenu-settings=, =treesit-outline-predicate= | NEWS.30 ~816 | Navigation integration |
+| =treesit-thing-settings=, =treesit-forward-sexp=, =treesit-transpose-sexps= | NEWS.30 ~2580 | Motion/syntax integration |
+| =treesit-enabled-modes= | NEWS.31 ~1196 | User option controlling TS mode activation |
+
+* Excluded features (notable, not package-dev relevant)
+
+| Feature | Source | Reason |
+|---------+--------+--------|
+| Eglot built-in | NEWS.29 ~2920 | End-user LSP client, not a package-dev tool |
+| New tree-sitter major modes (user-facing) | NEWS.29 ~2980 | End-user modes; API aspects covered in Tree-sitter topic |
+| =wallpaper= package | NEWS.29 ~2940 | End-user feature |
+| Touch screen support | NEWS.30 ~2540 | End-user input, not package-dev API |
+| =yank-media=, =yank-in-context= | NEWS.29 ~3940 | End-user editing commands |
+| New input methods | NEWS.29 ~474 | End-user feature |
+| =leuven-dark= theme | NEWS.29 ~2960 | End-user theme |
+| Tab bar improvements | NEWS.29, NEWS.30 | End-user UI |
+| =modus-themes= changes | NEWS.30, NEWS.31 | End-user themes |
+| PGTK dark/light mode | NEWS.31 ~4640 | End-user display |
+| =sleep-event= | NEWS.31 ~4630 | End-user event |
+| D-Bus authorization | NEWS.31 ~4516 | Specialized, not general package-dev |
+| =textsec.el= | NEWS.29 ~3850 | Security checking, niche |
+| =wallpaper-command= | NEWS.29 ~2940 | End-user |
+| =editorconfig= changes | NEWS.31 ~1150 | End-user |
+| =flyspell= turn-on/off obsolete | NEWS.31 ~2458 | End-user |
+| =vc-dav.el= obsolete | NEWS.31 ~3194 | End-user VC backend |
+| =idlwave= obsolete | NEWS.31 ~725 | End-user mode |
+| Various =gnus= changes | NEWS.30, NEWS.31 | End-user mail/news |
+| =erc= changes | NEWS.29, NEWS.30 | End-user IRC |
+| =eshell= changes | NEWS.30 | End-user shell |
+| =tramp= changes | NEWS.30 | End-user remote files |
+| =dired= changes | NEWS.29, NEWS.30 | End-user file manager |
+| Completion UI changes | NEWS.30, NEWS.31 | End-user completion display |
+| =x-popup-menu= touch | NEWS.30 ~2540 | End-user UI |
+| =mouse-face= on tab-bar | NEWS.31 ~640 | End-user UI |
+| =repeat-mode= (general) | NEWS.29 | End-user feature (keymap aspects in Binding) |
+| =cursor-face= text property | NEWS.29 ~3780 | End-user display |
+| =min-width= display property | NEWS.29 ~3780 | End-user display |
+| =get-display-property=, =add-display-text-property= | NEWS.29 ~3780 | Display internals |
+| =bidi-string-strip-control-characters= | NEWS.29 ~3790 | Display/security niche |
+| =x-begin-drag=, =dnd-begin-file-drag= | NEWS.29 ~3760 | Drag-and-drop, niche |
+| =touch-screen-track-tap=, =touch-screen-track-drag= | NEWS.30 ~2550 | Touch screen, niche |
+| =haiku-notifications-notify= | NEWS.30 ~2310 | Platform-specific |
+| =insert-special-event= | NEWS.31 ~4630 | Low-level, niche |
+| =tty-cursor-movement-use-TAB-BS= | NEWS.31 ~4200 | TTY display, niche |
+| =frame-initial-p= | NEWS.31 ~4340 | Daemon internals |
+| =char-displayable-on-frame-p= | NEWS.31 ~4340 | Display, niche |
+| =shell-command-do-open= | NEWS.31 ~4570 | End-user command |
+| =comment-setup-function= | NEWS.31 ~4610 | Mode internals, niche |
+| =inhibit-message= clearing | NEWS.31 ~4610 | Message display, niche |
+| =minibuffer-message= timer | NEWS.31 ~4620 | Minibuffer internals |
+| =read-directory-name= PREDICATE | NEWS.31 ~4630 | Minibuffer, niche |
+| JSON parse error line/column obsolete | NEWS.31 ~4630 | JSON internals |
+| =exec-suffixes= remote | NEWS.31 ~4630 | Remote execution, niche |
+| =buffer-local-toplevel-value=, =set-buffer-local-toplevel-value= | NEWS.31 ~4630 | Low-level, niche |
+| =transpose-sexps-function=, =forward-sentence-function= | NEWS.30 ~2570 | Motion internals (TS aspects in Tree-sitter) |
+| =completion-lazy-hilit= | NEWS.30 ~2560 | Completion performance, niche |
+| =buffer-last-name=, =marker-last-position= | NEWS.30 ~2560 | Low-level primitives |
+| =inhibit-auto-fill= | NEWS.30 ~2540 | End-user editing |
+| =secondary-tool-bar-map= | NEWS.30 ~2540 | End-user UI |
+| =case-symbols-as-words= | NEWS.30 ~2330 | End-user editing |
+| =current-key-remap-sequence= | NEWS.30 ~2320 | Key translation internals |
+| =key-translate= removal | NEWS.30 ~2320 | Key translation, niche |
+| Program name variables (=ctags-program-name=, etc.) | NEWS.30 ~2330 | Subprocess, niche |
+| =file-user-uid=, =file-group-uid= | NEWS.30 ~2620 | File attributes, niche |
+| =modify-dir-local-variable= FILE arg | NEWS.30 ~2630 | Dir-locals, niche |
+| =connection-local-p=, =connection-local-value= | NEWS.30 ~2630 | Connection locals, niche |
+| =tabulated-list-groups= | NEWS.30 ~2680 | (included in UI) |
+| =revert-buffer-restore-functions= | NEWS.30 ~2690 | Buffer revert, niche |
+| =context-menu-functions= text property | NEWS.30 ~2690 | Context menus, niche |
+| =hack-dir-local-get-variables-functions= | NEWS.30 ~2130 | Dir-locals, niche |
+| =auto-coding-functions= file name | NEWS.30 ~2130 | Coding, niche |
+| =help-fns-function-name= | NEWS.30 ~2160 | Help internals |
+| =char-to-name= | NEWS.30 ~2160 | Unicode, niche |
+| =merge-ordered-lists= | NEWS.30 ~2220 | Internal utility |
+| =re-disassemble= | NEWS.30 ~2280 | Regexp debugging (checking build only) |
+| =notifications-notify= icon naming | NEWS.30 ~2270 | Notifications, niche |
+| =dnd-multiple-handler= | NEWS.30 ~2270 | Drag-and-drop, niche |
+| =display-buffer= =pop-up-frames= action | NEWS.30 ~2210 | Window management, niche |
+| Fringe tooltips | NEWS.30 ~2200 | Display, niche |
+| =lisp-eval-depth-reserve= | NEWS.30 ~2210 | Eval depth, niche |
+| =define-advice= name property | NEWS.30 ~2180 | Advice, minor |
+| =sort= old signature still works | NEWS.30 ~2240 | (covered in Collections sort entry) |
+| =secure-hash= SHA-3 | NEWS.31 ~4320 | Hashing, niche |
+| =obarray-clear= | NEWS.30 ~2670 | (covered in Collections obarray entry) |
+| =purecopy= obsolete alias | NEWS.31 ~4440 | Internal, niche |
+| =defcustom= =:local permanent-only= | NEWS.31 ~4470 | Customization, niche |
+| =:reverse-video= face attr removed | NEWS.31 ~4480 | Face, niche (use =:inverse-video=) |
+| =date-to-time= local time default | NEWS.31 ~4540 | Time parsing, minor |
+| =remove-display-text-property= | NEWS.31 ~4540 | Display, niche |
+| =repeat-continue= | NEWS.31 ~4600 | (included in Binding) |
+| =defvar-keymap= =:prefix t= | NEWS.31 ~4620 | (included in Binding) |
+| =interactive= "R" | NEWS.31 ~4630 | (included in General) |
+
+* Phase 3 candidates
+
+Ecosystem-level shifts worth documenting in the development-landscape
+overview (Phase 3), not per-topic entries:
+
+- NonGNU ELPA maturation and its role in the package ecosystem.
+- =package-vc= changing how users install from source (Git checkouts
+  vs. tarballs) — affects package distribution strategy.
+- =use-package= built-in changing the "how to configure packages"
+  landscape — every guide/tutorial now assumes it.
+- Tree-sitter becoming the default for many major modes in Emacs 30+
+  (via =major-mode-remap-alist=) — affects mode authors.
+- Native compilation maturity (Emacs 28+ AOT, Emacs 30+
+  =compilation-safety=) — affects performance advice.
+- Eglot built-in (Emacs 29) — LSP now a first-class citizen.
+- Emacs 30 making tree-sitter modes the default for many languages.
+- The =erts-mode= / =ert-test-erts-file= testing paradigm for buffer
+  actions.
+
+* Summary
+
+- Total candidates examined: ~120+
+- Included: 72 features across 15 topics (+ 1 new Tree-sitter topic)
+- Excluded: ~60 features (end-user UI, niche internals, platform-specific)
+- Deferred to Phase 3: 8 ecosystem-level observations
