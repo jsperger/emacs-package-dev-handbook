@@ -857,6 +857,54 @@ Similar to =dash.el=, but with slightly different behavior that may be useful, a
 
 =map= is included with Emacs, but the latest version, which may include improvements since the last Emacs release, is now available separately on [[https://elpa.gnu.org/][GNU ELPA]].
 
+**** =seq.el=: Sequence manipulation functions           :built_in:sequences:
+:PROPERTIES:
+:CUSTOM_ID: seqel-sequence-manipulation-functions
+:END:
+
+=seq= is included with Emacs and provides generic functions that work on lists, vectors, and strings.  Emacs 29 added several new functions:
+
+- =seq-split=: Split a sequence into sub-sequences of a given length.
+- =seq-keep=: Like =seq-map=, but removes nil results.
+- =seq-positions=: Return indices of elements matching a predicate.
+- =seq-remove-at-position=: Remove the element at a given index.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Sequences-Arrays-Vectors.html][the Elisp manual on Sequences]].
+
+**** New =sort= keyword arguments (Emacs 30)              :built_in:lists:
+:PROPERTIES:
+:CUSTOM_ID: new-sort-keyword-arguments
+:END:
+
+In Emacs 30, =sort= accepts a new keyword-argument signature: =(sort SEQ :key FUNCTION :lessp PREDICATE :reverse BOOL :in-place BOOL)=.  By default, =sort= now sorts a /copy/ of the input (use =:in-place t= for the old behavior).  The =:key= argument extracts a sort key from each element, and =:lessp= defaults to the new polymorphic comparison function =value<=.
+
+#+BEGIN_SRC elisp :exports code
+  ;; Multi-key sorting:
+  (sort people :key (lambda (p) (list (age p) (name p))))
+#+END_SRC
+
+The old two-argument form =(sort SEQ PREDICATE)= still works and sorts in-place.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Sorting.html][the Elisp manual on Sorting]].
+
+**** Hash-table changes (Emacs 30–31)                  :built_in:hash_tables:
+:PROPERTIES:
+:CUSTOM_ID: hash-table-changes
+:END:
+
+- Emacs 30: The =:rehash-size= and =:rehash-threshold= arguments to =make-hash-table= are now ignored; Emacs manages hash-table memory automatically.  The printed representation was also simplified.
+- Emacs 30: Obarrays are now an opaque type created by =obarray-make=; the old vector representation is still accepted but =obarrayp= only returns t for obarray objects.  New function =obarray-clear=.
+- Emacs 31: New function =hash-table-contains-p= checks whether a key is present.
+
+**** New list predicates (Emacs 31)                         :built_in:lists:
+:PROPERTIES:
+:CUSTOM_ID: new-list-predicates
+:END:
+
+Emacs 31 added several built-in list functions that previously required =dash= or =cl-lib=:
+
+- =drop-while=, =take-while=: Like =drop=/=take= but with a predicate.
+- =all=, =any=: Return non-nil if all / any elements satisfy a predicate.
+- =equal= now compares circular lists without signaling an error.
+
 **** [[https://github.com/NicolasPetton/stream][stream: Lazy sequences]]                       :streams:sequences:lazy:
 
 #+BEGIN_QUOTE
