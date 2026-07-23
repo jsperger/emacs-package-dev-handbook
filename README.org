@@ -1761,7 +1761,7 @@ Emacs 31 also added =setopt-local=, the buffer-local equivalent.
 
 New in Emacs 30, =require-with-check= is like =require=, but it checks whether the feature is already loaded and, if so, verifies that the loaded file is not shadowed by a different version in =load-path=.  It either signals an error or forcibly reloads the file.  Useful for detecting version conflicts during development.
 
-**** Modern keymap API (Emacs 29)                       :built_in:keymaps:
+**** Modern keymap API (Emacs 29)                    :built_in:key_binding:
 :PROPERTIES:
 :CUSTOM_ID: modern-keymap-api
 :END:
