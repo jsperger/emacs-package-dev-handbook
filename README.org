@@ -105,6 +105,7 @@ You can read this Org file directly on the [[https://github.com/alphapapa/emacs-
   ;;;; Requirements
 
   (require 'cl-lib)
+  (require 'warnings)
 
   (require 'dash)
   (require 's)
