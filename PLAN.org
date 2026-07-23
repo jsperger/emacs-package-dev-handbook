@@ -1,0 +1,96 @@
+#+TITLE: Emacs 31 Revision Plan
+#+OPTIONS: toc:nil
+
+High-level roadmap for updating the Emacs Package Developer's Handbook to target Emacs 31.  This file organizes the work into phases with milestones; it is not a task-level plan.  Detailed per-topic tracking lives in the inventory produced in Phase 0.
+
+* Branch model
+
+- =master= :: pristine mirror of upstream (=alphapapa/emacs-package-dev-handbook=).  Never commit revision work here; only fast-forward it from =upstream/master=.
+- =develop= :: integration trunk and default branch.  All revision work lands here.  Branch from it, merge (or PR) back into it.
+- feature branches :: one per phase-task or topic, e.g. =audit/deprecations=, =topic/testing=, =bench/collections=.  Short-lived, merged into =develop=.
+- Upstream contribution, if/when desired, is a separate deliberate step: a curated PR from =develop= (or a cleaned branch off it) to =alphapapa/master=.
+
+* Phases
+
+Phases 1–3 build on each other and are roughly sequential.  Phases 4–6 are per-topic and can run in parallel on separate feature branches once Phase 1 is done.
+
+** Phase 0 — Baseline & tooling
+Milestone: /the publishing pipeline is reproducible on Emacs 31 with unchanged content./
+
+- Verify the save-hook pipeline (org-make-toc → tangle → HTML export) end to end on Emacs 31; document any setup needed beyond what CLAUDE.md records.
+- Byte-compile =epdh.el= under Emacs 31 and record every warning — these are the first data points for the deprecation audit.
+- Choose a link-checking method (tool or script) and run a baseline report of dead/redirecting links.
+- Build the *topic inventory*: a tracking table of every topic section with per-phase status columns.  This becomes the working checklist for Phases 1 and 4–6.
+
+** Phase 1 — Correctness sweep (goals 1–2)
+Milestone: /the guide makes no false or deprecated claims when read against Emacs 31./
+
+- Audit content against =references/NEWS.29=–=NEWS.31= (and Emacs 28 release notes) for functions/variables that are deprecated, removed, or renamed; rewrite or remove each reference.
+- Remove tips, workarounds, and advice that Emacs 28–31 made unnecessary (features now built in, defaults changed, bugs fixed).
+- Where historical context is worth keeping, mark it explicitly as historical rather than deleting.
+
+** Phase 2 — New-feature coverage (goal 3)
+Milestone: /every package-development-relevant feature added in Emacs 28–31 has a home in the guide./
+
+- Extract a candidate feature list from the NEWS files; triage by relevance to package development (not general Emacs use).
+- Write or extend sections for the survivors, slotting them into the existing alphabetical topic scheme rather than creating a version-based section.
+
+** Phase 3 — Development-landscape overview (goal 4)
+Milestone: /a new section summarizes how the ecosystem has shifted since the guide's last revision./
+
+- Cover changes in archives and distribution (GNU ELPA / NonGNU ELPA / MELPA), tooling (build/CI, linters), and community resources.
+- Keep it a survey with pointers, consistent with the guide's link-heavy style.
+
+** Phase 4 — Package recommendations refresh (goal 5)
+Milestone: /every topic's Libraries/Tools subsections have been reviewed once./
+
+- Topic by topic: add notable new packages, remove dead ones, update descriptions and links.
+- Removal rule: a package is removed for being *broken or superseded*, not merely for commit inactivity — verify before pruning.
+
+** Phase 5 — Benchmarks (goal 6)
+Milestone: /every benchmark table in the guide was produced on Emacs 31./
+
+- Re-run all =bench=/=bench-multi= source blocks on Emacs 31 (native-comp build) and replace the results tables.
+- Record the environment (Emacs version, build flags, hardware) alongside results.
+- Re-read the prose conclusions around each table — native compilation and 28–31 optimizations may have changed which form wins.
+
+** Phase 6 — Link hygiene (goal 7)
+Milestone: /the baseline link report from Phase 0 is fully dispositioned./
+
+- For each dead link: fix, replace with an archive.org/archive.is capture, or remove the entry.
+- Prefer archiving over deletion when the content is still valuable.
+
+** Phase 7 — Release
+Milestone: /develop holds a fully regenerated, self-consistent guide./
+
+- Full pipeline run: ToC, tangle, HTML export; review the rendered =index.html=.
+- Final read-through of the complete diff against upstream.
+- Decide whether and how to offer the revision upstream.
+
+* Acceptance checklist
+
+Apply at the end of every phase (and to any milestone-sized merge into =develop=).  All items must pass before the phase is called done.
+
+** Content accuracy
+- [ ] Every claim added or modified was verified against Emacs 31 documentation (=references/emacs-info=, NEWS files) — not memory.
+- [ ] No touched section references a symbol deprecated/removed in Emacs ≤31, except where explicitly framed as historical.
+- [ ] Every link added or modified resolves.
+
+** Document integrity
+- [ ] All pre-existing =CUSTOM_ID= properties are preserved (diff the set before/after) so published anchors don't break.
+- [ ] Alphabetical topic order and the recurring subheading scheme (Articles / Best practices / Examples / Libraries / Tools) are maintained.
+- [ ] Heading tags use the existing tag vocabulary.
+
+** Build
+- [ ] =org-make-toc= regenerates all ToC drawers without error.
+- [ ] Tangle succeeds and =epdh.el= byte-compiles on Emacs 31 with no new warnings.
+- [ ] HTML export succeeds; regenerated =index.html= spot-checked (anchors, theme assets, tables render).
+
+** Benchmarks (when the phase touched any)
+- [ ] Result tables were regenerated on Emacs 31, not hand-edited; environment noted.
+- [ ] Surrounding prose agrees with the new numbers.
+
+** Process
+- [ ] Work reached =develop= via a feature branch; =master= is untouched and still matches =upstream/master=.
+- [ ] Commit messages follow the =Prefix: description= convention.
+- [ ] Full diff read-through done; no unrelated churn (whitespace, export noise, ToC-only rewrites) mixed into content commits.

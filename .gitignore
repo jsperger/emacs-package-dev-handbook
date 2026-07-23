@@ -1,2 +1,4 @@
 *.elc
 *.texi
+references/
+.claude/settings.local.json
