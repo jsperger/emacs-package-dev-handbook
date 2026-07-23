@@ -1,0 +1,7 @@
+# Everything Emacs writes at runtime stays out of version control;
+# only init.el and lisp/ are tracked.
+*
+!.gitignore
+!init.el
+!lisp/
+!lisp/*.el
