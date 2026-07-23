@@ -1,0 +1,97 @@
+#+TITLE: Phase 0 — Byte-Compilation Warnings Baseline
+#+DATE: 2026-07-23
+
+Byte-compilation of =epdh.el= (as committed on =develop=) under Emacs
+31.0.90, Org 9.8.7.
+
+Command:
+
+#+BEGIN_SRC sh
+emacs --batch --init-directory=emacs.d -l emacs.d/init.el \
+  --eval '(byte-compile-file "epdh.el")'
+#+END_SRC
+
+Exit code: 0 (compilation succeeded; warnings are non-fatal).
+
+* Warnings (verbatim)
+
+#+BEGIN_EXAMPLE
+epdh.el: Warning: 'buffer-substring' is an obsolete generalized variable.
+
+In epdh/byte-compile-and-load-directory:
+epdh.el:107:17: Warning: 'called-interactively-p' called with 0 arguments, but requires 1
+epdh.el:113:12: Warning: 'byte-compile-file' called with 2 arguments, but accepts only 1
+epdh.el:131:14: Warning: 'buffer-substring' is an obsolete generalized variable.
+
+In bench:
+epdh.el:137:2: Warning: docstring wider than 80 characters
+
+In end of data:
+epdh.el:243:42: Warning: the function 'fourth' is not known to be defined.
+epdh.el:242:35: Warning: the function 'third' is not known to be defined.
+epdh.el:238:49: Warning: the function 'second' is not known to be defined.
+#+END_EXAMPLE
+
+The first warning (no line number) is emitted when =epdh.el= is loaded
+by =emacs.d/init.el= (=require 'epdh=), not by the byte-compiler
+itself.  The remaining seven are byte-compiler warnings.
+
+* Analysis
+
+** =buffer-substring= as obsolete generalized variable (line 131)
+In =epdh/emacs-lisp-macroreplace=:
+
+#+BEGIN_SRC elisp
+(setf (buffer-substring beg end) (pp-to-string expansion))
+#+END_SRC
+
+=buffer-substring= as a generalized variable for =setf= is obsolete.
+Replacement: =(delete-region beg end) (insert ...)= or
+=(replace-region-contents beg end ...)=.
+
+** =called-interactively-p= with 0 arguments (line 107)
+In =epdh/byte-compile-and-load-directory=:
+
+#+BEGIN_SRC elisp
+(if (or (not (called-interactively-p))
+#+END_SRC
+
+=called-interactively-p= requires one argument (a symbol, typically
+='interactive= or ='any=).  The zero-argument call was never correct;
+older Emacs may have tolerated it.
+
+** =byte-compile-file= with 2 arguments (line 113)
+In =epdh/byte-compile-and-load-directory=:
+
+#+BEGIN_SRC elisp
+(byte-compile-file file 'load)
+#+END_SRC
+
+=byte-compile-file= accepts only one argument (=file=).  The optional
+=load= argument was removed.  To compile and load: call
+=byte-compile-file= then =load= the resulting =.elc=.
+
+** Docstring wider than 80 characters (line 137)
+In =bench= macro: the docstring's first line exceeds 80 characters.
+Cosmetic; reflow the docstring.
+
+** =second=, =third=, =fourth= not known to be defined (lines 238, 242, 243)
+In =bench-multi= result formatting.  These are =cl= library accessors
+(=cl-second=, =cl-third=, =cl-fourth=).  =epdh.el= does not
+=(require 'cl-lib)= at compile time, so the byte-compiler cannot see
+them.  Fix: add =(require 'cl-lib)= to =epdh.el=, or use the =cl-=
+prefixed names.
+
+* Summary
+
+| # | Line | Severity | Category | Symbol |
+|---+------+----------+----------+--------|
+| 1 | 131  | warning  | obsolete generalized variable | =buffer-substring= |
+| 2 | 107  | warning  | wrong number of arguments | =called-interactively-p= |
+| 3 | 113  | warning  | wrong number of arguments | =byte-compile-file= |
+| 4 | 137  | warning  | docstring style | =bench= |
+| 5 | 238  | warning  | undefined function | =second= |
+| 6 | 242  | warning  | undefined function | =third= |
+| 7 | 243  | warning  | undefined function | =fourth= |
+
+All seven are seed data for the Phase 1 deprecation/correctness audit.

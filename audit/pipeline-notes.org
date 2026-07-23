@@ -1,0 +1,81 @@
+#+TITLE: Phase 0 — Pipeline Verification Notes
+#+DATE: 2026-07-23
+
+* Environment
+
+| Component | Version |
+|-----------+---------|
+| Emacs     | 31.0.90 |
+| Org       | 9.8.7   |
+| OS        | macOS (darwin) |
+
+Packages bootstrapped into =emacs.d/elpa/=: org-make-toc, htmlize, dash, s.
+
+* Procedure
+
+From the repo root:
+
+#+BEGIN_SRC sh
+emacs --batch --init-directory=emacs.d -l emacs.d/init.el -f epdh-publish
+#+END_SRC
+
+* Results
+
+** Exit code
+0 (success).
+
+** README.org
+Unchanged after pipeline run (=git status= clean).  org-make-toc found
+all ToC drawers already current.
+
+** epdh.el
+Unchanged after pipeline run.  Tangle reproduced it byte-identically
+(14 code blocks tangled from README.org).
+
+** index.html
+Regenerated with title-based anchors from
+=unpackaged/org-export-html-with-useful-ids-mode=.  Sample anchors:
+=#emacs-lisp=, =#animations--screencasts=, =#collections-lists-vectors-hash-tables-etc=.
+Zero random =#orgNNNNNNN= IDs found.  The regenerated file was
+discarded (=git checkout -- index.html=) per Phase 0 constraints;
+HTML regeneration is deferred to Phase 7.
+
+** Babel evaluation safety
+Five src blocks carry =:eval no-export= or =:eval never= headers; all
+five were correctly skipped during export ("Evaluation of this elisp
+code block is disabled").  No benchmark blocks were evaluated.
+=org-confirm-babel-evaluate= is not explicitly set in =emacs.d/init.el=
+but is not needed: tangling never evaluates, and the =:eval= headers
+prevent evaluation during export.
+
+* Warnings and messages
+
+** Known: =buffer-substring= obsolete generalized variable
+#+BEGIN_EXAMPLE
+epdh.el: Warning: 'buffer-substring' is an obsolete generalized variable.
+#+END_EXAMPLE
+Emitted when =epdh.el= is loaded during init (from the
+=setf (buffer-substring ...)= form in =epdh/emacs-lisp-macroreplace=).
+Recorded in =byte-compile-warnings.org= for the Phase 1 deprecation audit.
+
+** Cosmetic: org-id-locations not found
+#+BEGIN_EXAMPLE
+Could not read 'org-id-locations' from ~/code/emacs-package-dev-handbook/emacs.d/.org-id-locations, setting it to nil
+#+END_EXAMPLE
+First-run message; =.org-id-locations= is created after the run.
+No functional impact.
+
+** Cosmetic: htmlize "Fontifing nil"
+Batch-mode htmlize logs =Fontifing nil...= / =Fontifing nil...done=
+for each src block (the buffer name is nil in batch).  No functional
+impact; purely noisy output.
+
+* Gaps in project config
+
+None blocking.  Minor observations:
+
+- =org-confirm-babel-evaluate= could be set to =nil= in =init.el= to
+  suppress any future interactive evaluation prompts in the project
+  daemon, but the =:eval= headers already provide per-block control.
+- The htmlize "Fontifing nil" noise could be silenced by advising
+  =htmlize-buffer= in batch mode, but this is cosmetic.

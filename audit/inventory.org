@@ -1,0 +1,72 @@
+#+TITLE: Phase 0 — Topic Inventory
+#+DATE: 2026-07-23
+
+Tracking table for every topic section of README.org.  Status columns
+correspond to PLAN.org phases; later phases update this table.
+
+Status values: TODO → IN-PROGRESS → DONE (or N/A).
+
+* Emacs Lisp topics
+
+| Topic | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
+|-------+------+-----------------------+--------------------+----------------------+-----------------|
+| Animations / Screencasts | 114 | TODO | TODO | TODO | TODO |
+| Asynchronicity | 164 | TODO | TODO | TODO | TODO |
+| Auditing / Reviewing | 171 | TODO | TODO | TODO | TODO |
+| Binding | 186 | TODO | TODO | TODO | TODO |
+| Buffers | 259 | TODO | TODO | TODO | TODO |
+| Checkers / linters | 377 | TODO | TODO | TODO | TODO |
+| Collections (lists, vectors, hash-tables, etc.) | 407 | TODO | TODO | TODO | TODO |
+| Color | 900 | TODO | TODO | TODO | TODO |
+| Data structure | 924 | TODO | TODO | TODO | TODO |
+| Date / Time | 1034 | TODO | TODO | TODO | TODO |
+| Debugging | 1150 | TODO | TODO | TODO | TODO |
+| Destructuring | 1310 | TODO | TODO | TODO | TODO |
+| Documentation | 1317 | TODO | TODO | TODO | TODO |
+| Editing | 1324 | TODO | TODO | TODO | TODO |
+| General | 1459 | TODO | TODO | TODO | TODO |
+| Highlighting / font-locking | 1646 | TODO | TODO | TODO | TODO |
+| Multiprocessing (generators, threads) | 1719 | TODO | TODO | TODO | TODO |
+| Networking | 1779 | TODO | TODO | TODO | TODO |
+| Packaging | 1830 | TODO | TODO | TODO | TODO |
+| Pattern matching | 2473 | TODO | TODO | TODO | TODO |
+| Processes (incl. IPC, RPC) | 2674 | TODO | TODO | TODO | TODO |
+| Optimization | 2695 | TODO | TODO | TODO | TODO |
+| Refactoring | 3308 | TODO | TODO | TODO | TODO |
+| Regular expressions | 3324 | TODO | TODO | TODO | TODO |
+| Strings | 3446 | TODO | TODO | TODO | TODO |
+| Testing | 3509 | TODO | TODO | TODO | TODO |
+| User interface | 3689 | TODO | TODO | TODO | TODO |
+| Version control | 3850 | TODO | TODO | TODO | TODO |
+| XML / HTML | 3864 | TODO | TODO | TODO | TODO |
+
+* Blogs
+
+| Blog | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
+|------+------+-----------------------+--------------------+----------------------+-----------------|
+| Planet Emacsen | 4102 | TODO | N/A | N/A | TODO |
+| Sacha Chua's Emacs News | 4106 | TODO | N/A | N/A | TODO |
+| Artur Malabarba's Endless Parentheses | 4110 | TODO | N/A | N/A | TODO |
+| Irreal | 4112 | TODO | N/A | N/A | TODO |
+| Oleh Krehel's (or emacs) | 4116 | TODO | N/A | N/A | TODO |
+| Sacha Chua's Living an Awesome Life | 4121 | TODO | N/A | N/A | TODO |
+
+* People
+
+| Person | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
+|--------+------+-----------------------+--------------------+----------------------+-----------------|
+| Anders Lindgren | 4149 | TODO | TODO | N/A | TODO |
+| Artur Malabarba | 4178 | TODO | TODO | N/A | TODO |
+| Chris Wellons | 4199 | TODO | TODO | N/A | TODO |
+| Damien Cassou | 4215 | TODO | TODO | N/A | TODO |
+| Henrik Lissner | 4228 | TODO | TODO | N/A | TODO |
+| John Wiegley | 4248 | TODO | TODO | N/A | TODO |
+| Jonas Bernoulli | 4262 | TODO | TODO | N/A | TODO |
+| Jorgen Schäfer | 4275 | TODO | TODO | N/A | TODO |
+| Magnar Sveen | 4290 | TODO | TODO | N/A | TODO |
+| Matus Goljer | 4308 | TODO | TODO | N/A | TODO |
+| Oleh Krehel | 4325 | TODO | TODO | N/A | TODO |
+| Phil Lord | 4343 | TODO | TODO | N/A | TODO |
+| Roland Walker | 4356 | TODO | TODO | N/A | TODO |
+| Sacha Chua | 4370 | TODO | TODO | N/A | TODO |
+| Wilfred Hughes | 4381 | TODO | TODO | N/A | TODO |
