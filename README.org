@@ -1751,7 +1751,7 @@ Added in Emacs 30 (=static-if=) and Emacs 31 (=static-when=, =static-unless=), t
     (old-function arg))
 #+END_SRC
 
-See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].  See also [[#cross-version-compatibility][Development landscape: Cross-version compatibility]] for the broader picture of supporting multiple Emacs versions.
 
 **** =handler-bind=                                    :built_in:errors:
 :PROPERTIES:
@@ -2766,7 +2766,7 @@ The script can run Emacs with the developer's local Emacs configuration, or with
 -  State "TODO"       from              [2018-07-29 Sun 13:11]
 :END:
 
-Developed by the current maintainer of Emacs, himself, John Wiegley.  Since Emacs 29, =use-package= is [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][built in to Emacs]] and no longer needs to be installed separately.  See the [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][use-package Info manual]] for documentation.
+Developed by the current maintainer of Emacs, himself, John Wiegley.  Since Emacs 29, =use-package= is [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][built in to Emacs]] and no longer needs to be installed separately.  See the [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][use-package Info manual]] for documentation.  See also [[#package-configuration][Development landscape: Package configuration]] for how this changed configuration conventions.
 
 ***** =package-vc=: Install packages from VC checkouts           :built_in:
 :PROPERTIES:
@@ -2780,7 +2780,7 @@ Key commands:
 - =package-vc-checkout=: Check out a package's repository.
 - =package-vc-prepare-patch=: Prepare a patch from a checked-out package.
 
-The user option =package-vc-selected-packages= allows declarative specification of VC packages, similar to =package-selected-packages= for archive packages.
+The user option =package-vc-selected-packages= allows declarative specification of VC packages, similar to =package-selected-packages= for archive packages.  See also [[#package-archives-and-distribution][Development landscape: Package archives and distribution]] for how =package-vc= affects distribution strategy.
 
 See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Fetching-Package-Sources.html][the Emacs manual on Fetching Package Sources]].
 
@@ -3181,7 +3181,7 @@ Native compilation (compiling Elisp to machine code via =libgccjit=) has matured
 - Emacs 31: =native-compile-directory= natively compiles all Lisp files in a directory tree.
 - Emacs 31: =native-comp-async-on-battery-power= controls whether async native-comp runs on battery.
 
-See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Native-Compilation.html][the Elisp manual on Native Compilation]].
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Native-Compilation.html][the Elisp manual on Native Compilation]].  See also [[#native-compilation-matures][Development landscape: Native compilation matures]] for the ecosystem impact.
 
 **** Byte-compilation changes (Emacs 29–31)            :built_in:compilation:
 :PROPERTIES:
@@ -3986,7 +3986,7 @@ This is the standard, built-in Emacs testing library, used by core code and thir
 ***** Recent ERT improvements (Emacs 29–31)
 
 - Emacs 29: New variables =ert-batch-print-length= and =ert-batch-print-level= control printing of Lisp values in batch test results.  Redefining an ERT test in batch mode now signals an error, catching duplicate test names.
-- Emacs 29: ERT can produce JUnit XML test reports via the =EMACS_TEST_JUNIT_REPORT= environment variable, enabling CI/CD integration.
+- Emacs 29: ERT can produce JUnit XML test reports via the =EMACS_TEST_JUNIT_REPORT= environment variable, enabling CI/CD integration.  See also [[#testing-and-continuous-integration][Development landscape: Testing and continuous integration]].
 - Emacs 29: New =ert-test-erts-file= function and =erts-mode= allow testing buffer actions (indentation, fontification, etc.) from declarative =.erts= files.  See [[https://www.gnu.org/software/emacs/manual/html_node/ert/erts.html][the ERT manual on ERTS]].
 - Emacs 31: The macros =ert-with-test-buffer=, =ert-with-buffer-selected=, and =ert-with-buffer-renamed=, previously experimental in =ert-x=, are now stable and moved to =ert= itself.
 - Emacs 31: New =ert-play-keys= function sends keys to interactive input during tests, complementing =ert-simulate-keys=.
@@ -4100,7 +4100,7 @@ To work around this, pass a format string to ~error~, like ~(error "%s" "Foo doe
 :CUSTOM_ID: tree-sitter
 :END:
 
-Tree-sitter is a parser generator tool and incremental parsing library.  Emacs 29 added built-in support for tree-sitter via the =treesit.el= library, and Emacs 30 made tree-sitter-based major modes the default for many languages.  Package authors who write major modes or font-lock rules should be familiar with the tree-sitter API.
+Tree-sitter is a parser generator tool and incremental parsing library.  Emacs 29 added built-in support for tree-sitter via the =treesit.el= library, and Emacs 30 made tree-sitter-based major modes the default for many languages.  Package authors who write major modes or font-lock rules should be familiar with the tree-sitter API.  See also [[#tree-sitter-becomes-the-default][Development landscape: Tree-sitter becomes the default]] for the ecosystem shift.
 
 *** Articles                                                     :articles:
 :PROPERTIES:
