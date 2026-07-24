@@ -35,11 +35,12 @@ Milestone: /every package-development-relevant feature added in Emacs 28–31 ha
 - Extract a candidate feature list from the NEWS files; triage by relevance to package development (not general Emacs use).
 - Write or extend sections for the survivors, slotting them into the existing alphabetical topic scheme rather than creating a version-based section.
 
-Completed on branch =phase-2/new-features= (10 commits, ~470 lines
-added).  Triage in =audit/new-features.org=: ~170 candidates
-examined, ~80 included across 15 topics + 1 new Tree-sitter topic,
-~90 excluded.  All claims verified against Emacs 31.0.90.  See
-NOTES.org for lessons learned.
+Completed on branch =phase-2/new-features= (12 commits, ~470 lines
+added), merged to =develop= via PR #2.  Triage in
+=audit/new-features.org=: ~170 candidates examined, ~80 included
+across 15 topics + 1 new Tree-sitter topic, ~90 excluded.  All
+claims verified against Emacs 31.0.90.  See NOTES.org for lessons
+learned.
 
 ** Phase 3 — Development-landscape overview (goal 4)
 Milestone: /a new section summarizes how the ecosystem has shifted since the guide's last revision./

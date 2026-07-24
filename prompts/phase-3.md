@@ -1,20 +1,16 @@
 # Phase 3 — Development-landscape overview (cold-start prompt)
 
 You are starting Phase 3 of the Emacs 31 revision of the Emacs Package
-Developer's Handbook. Phases 0–2 are complete; Phase 2 is on branch
-`phase-2/new-features` (not yet merged to `develop`). Read, in this
-order: CLAUDE.md, PLAN.org (especially the Operational notes section),
-NOTES.org (Lessons learned), audit/inventory.org,
-audit/new-features.org (especially the "Phase 3 candidates" heading),
-and CHANGELOG.org.
+Developer's Handbook. Phases 0–2 are complete and merged into
+`develop`. Read, in this order: CLAUDE.md, PLAN.org (especially the
+Operational notes section), NOTES.org (Lessons learned),
+audit/inventory.org, audit/new-features.org (especially the "Phase 3
+candidates" heading), and CHANGELOG.org.
 
 Setup: work on a feature branch named `phase-3/landscape` created
-from `develop` (never commit to `master`). If `phase-2/new-features`
-has been merged into `develop` by the time you start, branch from the
-updated `develop`; otherwise branch from `develop` as-is — Phase 3
-does not depend on Phase 2's content. All Emacs operations use the
-project-local config in `emacs.d/` — never the personal Emacs config
-or its running daemon. From the repo root:
+from `develop` (never commit to `master`). All Emacs operations use
+the project-local config in `emacs.d/` — never the personal Emacs
+config or its running daemon. From the repo root:
 
 - batch one-shots: `emacs --batch --init-directory=emacs.d -l emacs.d/init.el <args>`
 - or start a project daemon once: `emacs --init-directory=emacs.d --daemon=epdh`,
