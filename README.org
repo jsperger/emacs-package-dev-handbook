@@ -425,7 +425,7 @@ Relint scans elisp files for mistakes in regexps, including deprecated syntax an
 Emacs 30 added many new byte-compiler warnings that package authors should be aware of:
 
 - Missing =lexical-binding= directive on the first line.
-- Empty bodies in =when=, =unless=, =ignore-error=, =with-suppressed-warnings=.
+- Empty bodies in =when=, =unless=, =ignore-error=, =with-suppressed-warnings=.  (Note: =ignore-error=, new in Emacs 28, ignores a /specific/ error condition; the older =ignore-errors= ignores /all/ errors.  They are different macros.)
 - Quoted error names in =condition-case= and =ignore-error= (e.g. ='arith-error= instead of =arith-error=).
 - Comparison by identity (=eq=, =eql=, =memq=, etc.) with literal strings, conses, vectors, or floats.
 - =condition-case= without any handlers.

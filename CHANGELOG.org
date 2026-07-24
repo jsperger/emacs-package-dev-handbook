@@ -60,7 +60,8 @@ documentation and the running Emacs 31.0.90 interpreter.
   ignored (Emacs 30), obarray opaque type (Emacs 30),
   =hash-table-contains-p= (Emacs 31).
 - Added =drop-while=, =take-while=, =all=, =any= (Emacs 31) and
-  =ensure-list=, =length</>/==, =always= (Emacs 28).
+  =ensure-list=, =length<=, =length>=, =length==, =always=
+  (Emacs 28).
 
 ** Strings
 
