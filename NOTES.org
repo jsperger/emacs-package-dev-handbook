@@ -8,7 +8,7 @@
 
 Maybe something like =elispedia= or =emacs-lisp-almanac=.
 
-* Lessons learned (Phases 0–1)
+* Lessons learned (Phases 0–2)
 
 ** Pipeline and tooling
 
@@ -78,3 +78,53 @@ Maybe something like =elispedia= or =emacs-lisp-almanac=.
 - The mastering-emacs articles are good high-level summaries for
   triaging which NEWS entries matter; the NEWS files themselves are
   the exhaustive source.
+
+** Feature triage (Phase 2)
+
+- Parallel subagents work well for triaging large NEWS files
+  (~4000–5000 lines each).  Four agents (NEWS.29, NEWS.30, NEWS.31,
+  mastering-emacs articles) ran concurrently and produced
+  comprehensive triage lists.  However, the agents took 3–5 minutes
+  each; reading the Lisp Changes sections directly (they start at
+  predictable line numbers) is faster for targeted work.
+- The "Lisp Changes" and "Incompatible Lisp Changes" sections in
+  each NEWS file are the highest-yield areas for package-dev
+  features.  Line numbers: NEWS.29 ~3461/3093, NEWS.30 ~2123/1999,
+  NEWS.31 ~4315/4100.
+- Verifying features with =fboundp= / =locate-library= in batch
+  Emacs is fast and reliable.  Some Emacs 31 features (e.g.
+  =ert-play-keys=, =dom-inner-text=) are not yet in the 31.0.90
+  pre-release but are documented in NEWS.31 — trust the NEWS file
+  for these.
+- The mastering-emacs articles are the /only/ source for Emacs 28
+  features (no NEWS.28 exists).  Emacs 28 added many now-fundamental
+  functions (=string-search=, =string-replace=, =ensure-list=,
+  =length<=, =length>=, =length==, =named-let=, =pcase-setq=) that
+  are easy to miss if you only scan NEWS.29–31.
+- Triage strictly for /package development/ relevance.  The NEWS
+  files are dominated by end-user features (new modes, UI changes,
+  platform support); typically only 30–40% of Lisp Changes entries
+  are package-dev relevant.
+
+** Content structure (Phase 2)
+
+- New built-in features fit naturally as =****= entries under
+  existing =*** Libraries= or =*** Reference= subsections, tagged
+  =:built_in:=.  This follows the existing pattern (e.g. =cl-lib=,
+  =subr-x=, =map.el= entries).
+- When a feature spans multiple concerns (e.g. =handler-bind= is
+  both a General Elisp feature and a Debugging tool), put the
+  primary entry in the most relevant topic and add a cross-reference
+  in the secondary topic.
+- The existing "Binding" section is about /variable scope/, not key
+  bindings.  Keymap API features belong under General.
+- New topic sections (e.g. Tree-sitter) need: a =**= heading in
+  alphabetical order, =:PROPERTIES:= with =:CUSTOM_ID:=, =:TOC:=
+  drawer, and the standard subheading scheme (Articles / Libraries /
+  Best practices / Tools).
+- Every new heading needs a =:CUSTOM_ID:= (lowercase, hyphenated
+  slug).  Extract all CUSTOM_IDs before and after editing to verify
+  none are lost: =python3 -c "import re; ..."= works well.
+- One commit per topic (or logical group) keeps the history clean
+  and reviewable.  Use =Prefix: description= style: =Add: Extend
+  Collections with seq.el, new sort API=.

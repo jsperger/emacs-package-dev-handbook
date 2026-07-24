@@ -8,37 +8,38 @@ Status values: TODO → IN-PROGRESS → DONE (or N/A).
 
 * Emacs Lisp topics
 
-| Topic | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
-|-------+------+-----------------------+--------------------+----------------------+-----------------|
-| Animations / Screencasts | 114 | DONE | TODO | TODO | TODO |
-| Asynchronicity | 164 | DONE | TODO | TODO | TODO |
-| Auditing / Reviewing | 171 | DONE | TODO | TODO | TODO |
-| Binding | 186 | DONE | TODO | TODO | TODO |
-| Buffers | 259 | DONE | TODO | TODO | TODO |
-| Checkers / linters | 377 | DONE | TODO | TODO | TODO |
-| Collections (lists, vectors, hash-tables, etc.) | 407 | DONE [1] | TODO | TODO [1] | TODO |
-| Color | 900 | DONE | TODO | TODO | TODO |
-| Data structure | 924 | DONE | TODO | TODO | TODO |
-| Date / Time | 1034 | DONE | TODO | TODO | TODO |
-| Debugging | 1150 | DONE | TODO | TODO | TODO |
-| Destructuring | 1310 | DONE | TODO | TODO | TODO |
-| Documentation | 1317 | DONE | TODO | TODO | TODO |
-| Editing | 1324 | DONE | TODO | TODO | TODO |
-| General | 1459 | DONE [2] | TODO | TODO | TODO |
-| Highlighting / font-locking | 1646 | DONE | TODO | TODO | TODO |
-| Multiprocessing (generators, threads) | 1719 | DONE | TODO | TODO | TODO |
-| Networking | 1779 | DONE | TODO | TODO | TODO |
-| Packaging | 1830 | DONE [3] | TODO | TODO | TODO |
-| Pattern matching | 2473 | DONE [4] | TODO | TODO | TODO |
-| Processes (incl. IPC, RPC) | 2674 | DONE | TODO | TODO | TODO |
-| Optimization | 2695 | DONE [5] | TODO | TODO | TODO |
-| Refactoring | 3308 | DONE | TODO | TODO | TODO |
-| Regular expressions | 3324 | DONE | TODO | TODO | TODO |
-| Strings | 3446 | DONE | TODO | TODO | TODO |
-| Testing | 3509 | DONE | TODO | TODO | TODO |
-| User interface | 3689 | DONE | TODO | TODO | TODO |
-| Version control | 3850 | DONE | TODO | TODO | TODO |
-| XML / HTML | 3864 | DONE | TODO | TODO | TODO |
+| Topic | Line | Phase 1 (correctness) | Phase 2 (new features) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |
+|-------+------+-----------------------+------------------------+--------------------+----------------------+-----------------|
+| Animations / Screencasts | 114 | DONE | N/A | TODO | TODO | TODO |
+| Asynchronicity | 164 | DONE | N/A | TODO | TODO | TODO |
+| Auditing / Reviewing | 171 | DONE | N/A | TODO | TODO | TODO |
+| Binding | 186 | DONE | N/A [6] | TODO | TODO | TODO |
+| Buffers | 259 | DONE | DONE | TODO | TODO | TODO |
+| Checkers / linters | 377 | DONE | DONE | TODO | TODO | TODO |
+| Collections (lists, vectors, hash-tables, etc.) | 407 | DONE [1] | DONE | TODO | TODO [1] | TODO |
+| Color | 900 | DONE | DONE | TODO | TODO | TODO |
+| Data structure | 924 | DONE | DONE | TODO | TODO | TODO |
+| Date / Time | 1034 | DONE | DONE | TODO | TODO | TODO |
+| Debugging | 1150 | DONE | DONE | TODO | TODO | TODO |
+| Destructuring | 1310 | DONE | N/A | TODO | TODO | TODO |
+| Documentation | 1317 | DONE | N/A | TODO | TODO | TODO |
+| Editing | 1324 | DONE | N/A | TODO | TODO | TODO |
+| General | 1459 | DONE [2] | DONE | TODO | TODO | TODO |
+| Highlighting / font-locking | 1646 | DONE | DONE | TODO | TODO | TODO |
+| Multiprocessing (generators, threads) | 1719 | DONE | N/A | TODO | TODO | TODO |
+| Networking | 1779 | DONE | N/A | TODO | TODO | TODO |
+| Packaging | 1830 | DONE [3] | DONE | TODO | TODO | TODO |
+| Pattern matching | 2473 | DONE [4] | DONE | TODO | TODO | TODO |
+| Processes (incl. IPC, RPC) | 2674 | DONE | N/A | TODO | TODO | TODO |
+| Optimization | 2695 | DONE [5] | DONE | TODO | TODO | TODO |
+| Refactoring | 3308 | DONE | N/A | TODO | TODO | TODO |
+| Regular expressions | 3324 | DONE | N/A | TODO | TODO | TODO |
+| Strings | 3446 | DONE | DONE | TODO | TODO | TODO |
+| Testing | 3509 | DONE | DONE | TODO | TODO | TODO |
+| Tree-sitter | (new) | N/A | DONE | TODO | N/A | TODO |
+| User interface | 3689 | DONE | DONE | TODO | TODO | TODO |
+| Version control | 3850 | DONE | N/A | TODO | TODO | TODO |
+| XML / HTML | 3864 | DONE | DONE | TODO | TODO | TODO |
 
 [1] Collections: =cl-evenp= in benchmark code is deprecated in Emacs
 31 (renamed to =evenp=) but not yet marked obsolete.  Deferred to
@@ -64,6 +65,10 @@ characters).  Replaced bare CL accessors =second=/=third=/=fourth=
 with =cl-second=/=cl-third=/=cl-fourth= in =bench-multi= and
 =bench-multi-process-results=.  Fixed =byte-compile-file= 2-arg
 calling convention in =bench-multi-lexical=.
+
+[6] Binding: The keymap API additions (Emacs 29) were placed under
+General rather than Binding, since the Binding section covers variable
+scope, not key bindings.
 
 * Blogs
 

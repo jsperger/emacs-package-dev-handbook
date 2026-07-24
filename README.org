@@ -375,6 +375,18 @@ package makers, as there is no need to bother about implementing routine details
 users, as it provides familiar and intuitive interfaces with usual keys (for moving by lines, marking, sorting, switching between buttons); and what is also important, the defined interfaces are highly configurable through various generated variables.
 #+END_QUOTE
 
+**** Built-in buffer utilities (Emacs 29–31)                    :built_in:
+:PROPERTIES:
+:CUSTOM_ID: built-in-buffer-utilities
+:END:
+
+- =buffer-match-p=, =match-buffers= (Emacs 29): Declarative buffer matching using conditions like regexps, =(major-mode . MODE)=, and =and=/=or=/=not= combinations.  Useful for package configuration and buffer filtering.
+- =with-restriction=, =without-restriction= (Emacs 29): Enhanced alternatives to =save-restriction= + =narrow-to-region= / =widen=, with optional labeled narrowing.
+- =buffer-local-set-state= (Emacs 29): Helper macro for minor modes to restore buffer-local variables when the mode is switched off.
+- =with-buffer-unmodified-if-unchanged= (Emacs 29): Mark the buffer as unmodified again if the net change is zero.
+- =with-work-buffer= (Emacs 31): Like =with-temp-buffer=, but reuses previously allocated buffers (up to =work-buffer-limit=, default 10), avoiding allocation overhead.
+- =set-local=, =setopt-local= (Emacs 31): Buffer-local equivalents of =set= and =setopt=.
+
 ** Checkers / linters                                     :linters:checkers:
 :PROPERTIES:
 :CUSTOM_ID: checkers--linters
@@ -404,6 +416,27 @@ This library provides a =flycheck= checker for the metadata in Emacs Lisp files 
 #+BEGIN_QUOTE
 Relint scans elisp files for mistakes in regexps, including deprecated syntax and bad practice.  It also checks the regexp-like arguments to =skip-chars-forward=, =skip-chars-backward=, =skip-syntax-forward= and =skip-syntax-backward=.
 #+END_QUOTE
+
+*** New byte-compilation warnings (Emacs 30)                   :built_in:
+:PROPERTIES:
+:CUSTOM_ID: new-byte-compilation-warnings
+:END:
+
+Emacs 30 added many new byte-compiler warnings that package authors should be aware of:
+
+- Missing =lexical-binding= directive on the first line.
+- Empty bodies in =when=, =unless=, =ignore-error=, =with-suppressed-warnings=.  (Note: =ignore-error=, new in Emacs 28, ignores a /specific/ error condition; the older =ignore-errors= ignores /all/ errors.  They are different macros.)
+- Quoted error names in =condition-case= and =ignore-error= (e.g. ='arith-error= instead of =arith-error=).
+- Comparison by identity (=eq=, =eql=, =memq=, etc.) with literal strings, conses, vectors, or floats.
+- =condition-case= without any handlers.
+- =unwind-protect= without unwind forms.
+- Useless trailing =cond= clauses after a default clause.
+- Mutation of constant values (=setcar= on a quoted list, =aset= on a literal vector/string).
+- Ignored return values of functions declared =important-return-value= or =side-effect-free= (e.g. =nreverse= without using the result).
+- Control characters in docstrings.
+- Wide docstrings (can be disabled separately with warning name =docstrings-wide=).
+
+Most of these can be suppressed with =with-suppressed-warnings=.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Compiler-Warnings.html][the Elisp manual on Compiler Warnings]].
 
 ** Collections (lists, vectors, hash-tables, etc.)             :collections:
 :PROPERTIES:
@@ -857,6 +890,60 @@ Similar to =dash.el=, but with slightly different behavior that may be useful, a
 
 =map= is included with Emacs, but the latest version, which may include improvements since the last Emacs release, is now available separately on [[https://elpa.gnu.org/][GNU ELPA]].
 
+**** =seq.el=: Sequence manipulation functions           :built_in:sequences:
+:PROPERTIES:
+:CUSTOM_ID: seqel-sequence-manipulation-functions
+:END:
+
+=seq= is included with Emacs and provides generic functions that work on lists, vectors, and strings.  Emacs 29 added several new functions:
+
+- =seq-split=: Split a sequence into sub-sequences of a given length.
+- =seq-keep=: Like =seq-map=, but removes nil results.
+- =seq-positions=: Return indices of elements matching a predicate.
+- =seq-remove-at-position=: Remove the element at a given index.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Sequences-Arrays-Vectors.html][the Elisp manual on Sequences]].
+
+**** New =sort= keyword arguments (Emacs 30)              :built_in:lists:
+:PROPERTIES:
+:CUSTOM_ID: new-sort-keyword-arguments
+:END:
+
+In Emacs 30, =sort= accepts a new keyword-argument signature: =(sort SEQ :key FUNCTION :lessp PREDICATE :reverse BOOL :in-place BOOL)=.  By default, =sort= now sorts a /copy/ of the input (use =:in-place t= for the old behavior).  The =:key= argument extracts a sort key from each element, and =:lessp= defaults to the new polymorphic comparison function =value<=.
+
+#+BEGIN_SRC elisp :exports code
+  ;; Multi-key sorting:
+  (sort people :key (lambda (p) (list (age p) (name p))))
+#+END_SRC
+
+The old two-argument form =(sort SEQ PREDICATE)= still works and sorts in-place.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Sorting.html][the Elisp manual on Sorting]].
+
+**** Hash-table changes (Emacs 30–31)                  :built_in:hash_tables:
+:PROPERTIES:
+:CUSTOM_ID: hash-table-changes
+:END:
+
+- Emacs 30: The =:rehash-size= and =:rehash-threshold= arguments to =make-hash-table= are now ignored; Emacs manages hash-table memory automatically.  The printed representation was also simplified.
+- Emacs 30: Obarrays are now an opaque type created by =obarray-make=; the old vector representation is still accepted but =obarrayp= only returns t for obarray objects.  New function =obarray-clear=.
+- Emacs 31: New function =hash-table-contains-p= checks whether a key is present.
+
+**** New list predicates (Emacs 31)                         :built_in:lists:
+:PROPERTIES:
+:CUSTOM_ID: new-list-predicates
+:END:
+
+Emacs 31 added several built-in list functions that previously required =dash= or =cl-lib=:
+
+- =drop-while=, =take-while=: Like =drop=/=take= but with a predicate.
+- =all=, =any=: Return non-nil if all / any elements satisfy a predicate.
+- =equal= now compares circular lists without signaling an error.
+
+Emacs 28 also added these commonly used utilities:
+
+- =ensure-list=: If the argument is a list, return it; otherwise, return a single-element list.  Replaces the common =(if (listp x) x (list x))= pattern.
+- =length<=, =length>=, =length==: Efficient length comparison predicates that avoid consing.
+- =always=: Like =ignore= but returns t; useful as a callback.
+
 **** [[https://github.com/NicolasPetton/stream][stream: Lazy sequences]]                       :streams:sequences:lazy:
 
 #+BEGIN_QUOTE
@@ -921,6 +1008,13 @@ Includes these functions:
 +  =yk-color-rgb-to-srgb=
 +  =yk-color-srgb-to-rgb=
 +  =yk-color-to-rgb=
+
+**** =color-blend= (Emacs 31)                                   :built_in:
+:PROPERTIES:
+:CUSTOM_ID: color-blend
+:END:
+
+New in Emacs 31, =color-blend= takes two RGB lists and an optional ALPHA and returns an RGB list whose elements are blended in linear space proportional to ALPHA.  Useful for theme-aware packages that need to compute intermediate colors.
 
 ** Data structure                                           :data_structure:
 :PROPERTIES:
@@ -1029,8 +1123,17 @@ The dictionary tree data structures are a hybrid between tries and hash tables. 
 :END:
 
 #+BEGIN_QUOTE
-extmap is a very simple package that lets you build a read-only, constant database that maps Elisp symbols to almost arbitrary Elisp objects. The idea is to avoid preloading all data to memory and only retrieve it when needed.  This package doesn’t use any external programs, making it a suitable dependency for smaller libraries.
+extmap is a very simple package that lets you build a read-only, constant database that maps Elisp symbols to almost arbitrary Elisp objects. The idea is to avoid preloading all data to memory and only retrieve it when needed.  This package doesn't use any external programs, making it a suitable dependency for smaller libraries.
 #+END_QUOTE
+
+**** OClosures (Emacs 29)                                       :built_in:
+:PROPERTIES:
+:CUSTOM_ID: oclosures
+:END:
+
+New in Emacs 29, OClosures are "functions with slots" — function objects that expose additional information about themselves.  Use =oclosure-define= to define a new OClosure type and =oclosure-lambda= to create instances.  They are useful for creating functions that carry metadata, such as interactive specs computed on demand (via =oclosure-interactive-form=).
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/OClosures.html][the Elisp manual on OClosures]].
 
 ** Date / Time                                                 :dates:times:
 :PROPERTIES:
@@ -1147,6 +1250,13 @@ The primary function provided is: ~(datetime-format SYM-OR-FMT &optional TIME &r
 #+END_SRC
 
 There are several other symbols provided besides ~atom~, such as ~rfc-3339~, which formats dates according to that RFC.
+
+**** =seconds-to-string= formatting (Emacs 31)                  :built_in:
+:PROPERTIES:
+:CUSTOM_ID: seconds-to-string-formatting
+:END:
+
+In Emacs 31, =seconds-to-string= supports new optional formatting arguments to produce human-readable time-duration strings in a variety of formats, e.g. "6 months 3 weeks" or "5m 52.5s".  Useful for packages that display elapsed time or durations.
 
 ** Debugging                                                     :debugging:
 :PROPERTIES:
@@ -1307,6 +1417,40 @@ You could write:
            (display-warning fn-name (format ,string ,@args) ,level ,buffer)
            nil))))
 #+END_SRC
+
+*** Reference                                                   :reference:
+:PROPERTIES:
+:CUSTOM_ID: debugging-reference
+:END:
+
+**** Error descriptor API (Emacs 31)                            :built_in:
+:PROPERTIES:
+:CUSTOM_ID: error-descriptor-api
+:END:
+
+Emacs 31 improved the API for manipulating error descriptors (the objects caught by =condition-case=):
+
+- =error-type-p=: Check whether an error descriptor matches a given error type.
+- =error-type=: Return the error type of a descriptor.
+- =error-has-type-p=: Check whether a descriptor has a given type.
+- =error-slot-value=: Access a specific slot of an error descriptor.
+- =(signal err)=: Signal an error descriptor directly, preserving =eq= identity (instead of =(signal (car err) (cdr err))=).
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Errors.html][the Elisp manual on Errors]].
+
+**** =handler-bind= (Emacs 30)                                  :built_in:
+:PROPERTIES:
+:CUSTOM_ID: handler-bind-debugging
+:END:
+
+See [[#handler-bind][the General section entry on =handler-bind=]].
+
+**** Batch debugging (Emacs 31)                                 :built_in:
+:PROPERTIES:
+:CUSTOM_ID: batch-debugging
+:END:
+
+In Emacs 31, calling =debug= in batch sessions no longer kills Emacs.  If you want Emacs to exit, your program must now call =kill-emacs= explicitly.  This makes it safer to use =debug= in batch scripts and CI pipelines.
 
 ** Destructuring                                             :destructuring:
 :PROPERTIES:
@@ -1498,6 +1642,30 @@ The editor of this handbook uses ~iedit~ with these customizations:
 
 This is the built-in =cl-lib= package which implements Common Lisp functions and control structures for Emacs Lisp.
 
+***** Emacs 31 renames
+
+In Emacs 31, several =cl-lib= functions and macros are being renamed to bare names, moving them into the core language:
+
+| Old name       | New name    | Status in Emacs 31 |
+|----------------+-------------+--------------------|
+| =cl-incf=      | =incf=      | deprecated         |
+| =cl-decf=      | =decf=      | deprecated         |
+| =cl-oddp=      | =oddp=      | deprecated         |
+| =cl-evenp=     | =evenp=     | deprecated         |
+| =cl-plusp=     | =plusp=     | deprecated         |
+| =cl-minusp=    | =minusp=    | deprecated         |
+| =cl-member-if= | =member-if= | obsolete           |
+
+=cl-member-if= is marked obsolete; the others are deprecated and will be marked obsolete in a future release.  New code should use the bare names.  See [[https://www.gnu.org/software/emacs/manual/html_node/cl/index.html][the CL manual]] for details.
+
+Additionally, =cl-locally=, =cl-declare=, and =cl-gensym= are now obsolete; use =gensym= and =defvar= instead.
+
+In Emacs 30, =defadvice= was marked obsolete; use =advice-add= or =define-advice= instead.
+
+***** Macro-writing macros
+
+Emacs 29 added =cl-with-gensyms= and =cl-once-only=, which simplify writing hygienic macros.  See [[https://www.gnu.org/software/emacs/manual/html_node/cl/Macro_002dWriting-Macros.html][the CL manual section on Macro-Writing Macros]].
+
 **** [[https://github.com/magnars/dash.el][dash.el]]                                                        :dash:
 :PROPERTIES:
 :ID:       e85e4252-ea03-4473-b52f-9393e7527fad
@@ -1529,6 +1697,119 @@ This is a built-in package that provides several useful functions and macros, su
 #+BEGIN_QUOTE
 Do not document these functions in the lispref.  http://lists.gnu.org/archive/html/emacs-devel/2014-01/msg01006.html
 #+END_QUOTE
+
+**** Modern binding and flow-control macros              :built_in:flow_control:
+:PROPERTIES:
+:CUSTOM_ID: modern-binding-and-flow-control-macros
+:END:
+
+Emacs 28–31 added several macros that improve on older patterns:
+
+- =if-let*=, =when-let*=, =and-let*= (Emacs 26+, but =if-let= and =when-let= are [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][now obsolete in Emacs 31]]): bind variables conditionally with a cleaner syntax than the old single-binding =if-let=/=when-let= forms.
+- =while-let= (Emacs 29): like =when-let=, but repeats until a binding form evaluates to nil.  Replaces many =while= + =pop= / =while= + =setq= patterns.
+
+#+BEGIN_SRC elisp :exports code
+  ;; Instead of:
+  (while (setq item (pop list))
+    (process item))
+
+  ;; You can write:
+  (while-let ((item (pop list)))
+    (process item))
+#+END_SRC
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
+
+**** =named-let= (Emacs 28)                              :built_in:flow_control:
+:PROPERTIES:
+:CUSTOM_ID: named-let
+:END:
+
+New in Emacs 28, =named-let= provides Scheme-style named-let looping: it binds a function name that can be called recursively to iterate, with arguments as loop variables.  It is often clearer than =cl-loop= for simple recursive iteration.
+
+#+BEGIN_SRC elisp :exports code
+  (named-let loop ((i 0) (acc nil))
+    (if (>= i 5)
+        (nreverse acc)
+      (loop (1+ i) (cons i acc))))
+  ;; => (0 1 2 3 4)
+#+END_SRC
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
+
+**** =static-if=, =static-when=, =static-unless=       :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: static-if-static-when-static-unless
+:END:
+
+Added in Emacs 30 (=static-if=) and Emacs 31 (=static-when=, =static-unless=), these macros evaluate their condition at macro-expansion time and hide the untaken branch from the evaluator and byte-compiler.  They are handy for writing code that works across Emacs versions without triggering byte-compiler warnings about functions that don't exist in the target version.
+
+#+BEGIN_SRC elisp :exports code
+  (static-if (fboundp 'new-function)
+      (new-function arg)
+    (old-function arg))
+#+END_SRC
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Conditionals.html][the Elisp manual on Conditionals]].
+
+**** =handler-bind=                                    :built_in:errors:
+:PROPERTIES:
+:CUSTOM_ID: handler-bind
+:END:
+
+New in Emacs 30, =handler-bind= is like =condition-case= except it runs the handler code /without unwinding the stack/, so the backtrace and other dynamic state at the point of the error are preserved.  This is useful for debugging and for error handlers that need to inspect the error context.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Handling-Errors.html][the Elisp manual on Handling Errors]].
+
+**** =with-memoization=                                  :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: with-memoization
+:END:
+
+New in Emacs 29, =with-memoization= provides a simple form of memoization: it caches the result of a form in a variable and returns the cached value on subsequent calls.  Useful for expensive computations in functions that may be called repeatedly.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Memoization.html][the Elisp manual on Memoization]].
+
+**** =setopt=                                            :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: setopt
+:END:
+
+New in Emacs 29, =setopt= is like =setq= but is meant for user options: it uses =custom-set= / =set-default= to set them, which triggers any custom setters and applies any =:set= functions declared by =defcustom=.  Use it instead of =setq= when setting user options in init files or package code.
+
+Emacs 31 also added =setopt-local=, the buffer-local equivalent.
+
+**** =require-with-check=                                :built_in:loading:
+:PROPERTIES:
+:CUSTOM_ID: require-with-check
+:END:
+
+New in Emacs 30, =require-with-check= is like =require=, but it checks whether the feature is already loaded and, if so, verifies that the loaded file is not shadowed by a different version in =load-path=.  It either signals an error or forcibly reloads the file.  Useful for detecting version conflicts during development.
+
+**** Modern keymap API (Emacs 29)                    :built_in:key_binding:
+:PROPERTIES:
+:CUSTOM_ID: modern-keymap-api
+:END:
+
+Emacs 29 introduced a new set of functions for defining and manipulating keymaps, using the same key syntax as =kbd=.  Package authors should prefer these over the older functions:
+
+| New function         | Replaces                    |
+|----------------------+-----------------------------|
+| =keymap-set=         | =define-key=                |
+| =keymap-global-set=  | =global-set-key=            |
+| =keymap-local-set=   | =local-set-key=             |
+| =keymap-global-unset=| =global-unset-key=          |
+| =keymap-local-unset= | =local-unset-key=           |
+| =keymap-substitute=  | =substitute-key-definition= |
+| =keymap-lookup=      | =lookup-key= / =key-binding=|
+
+New macros for defining keymaps:
+- =defvar-keymap=: Define a keymap variable concisely, with =:repeat= support for =repeat-mode= and (Emacs 31) =:prefix t= for prefix commands.
+- =define-keymap=: Define a keymap with multiple bindings in one form.
+
+Also new: =key-valid-p= validates key syntax strictly, and =key-parse= is like =kbd= but always returns vectors.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Keymaps.html][the Elisp manual on Keymaps]].
 
 *** Tools                                                           :tools:
 :PROPERTIES:
@@ -1719,6 +2000,29 @@ Tools for developing highlighting/font-locking packages.
 :ID:       85a2421d-6fbd-4c4d-a6f9-587258c8f625
 :CUSTOM_ID: highlight-refontification-visualize-how-font-lock-refontifies-a-buffer
 :END:
+
+*** Reference                                                   :reference:
+:PROPERTIES:
+:CUSTOM_ID: highlighting-reference
+:END:
+
+**** New font-lock faces (Emacs 29)                             :built_in:
+:PROPERTIES:
+:CUSTOM_ID: new-font-lock-faces
+:END:
+
+Emacs 29 added new font-lock faces, primarily for use with tree-sitter modes but available to any package:
+
+=font-lock-bracket-face=, =font-lock-delimiter-face=, =font-lock-escape-face=, =font-lock-function-call-face=, =font-lock-misc-punctuation-face=, =font-lock-number-face=, =font-lock-operator-face=, =font-lock-property-name-face=, =font-lock-property-use-face=, =font-lock-punctuation-face=, =font-lock-regexp-face=, =font-lock-variable-use-face=.
+
+These provide finer-grained highlighting than the traditional faces.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Faces-for-Font-Lock.html][the Elisp manual on Faces for Font Lock]].
+
+**** Font-lock face variables obsolete (Emacs 31)               :built_in:
+:PROPERTIES:
+:CUSTOM_ID: font-lock-face-variables-obsolete
+:END:
+
+In Emacs 31, the font-lock face /variables/ (e.g. =font-lock-builtin-face=, =font-lock-comment-face=, =font-lock-string-face=, etc.) are now obsolete.  In font-lock rules, use the face symbol directly (quoted) instead of the variable.  For example, write ='font-lock-string-face= instead of the variable =font-lock-string-face=.  Customizing the faces via =customize-face= is unaffected.
 
 ** Multiprocessing (generators, threads)           :multiprocessing:
 :PROPERTIES:
@@ -2452,7 +2756,7 @@ The script can run Emacs with the developer's local Emacs configuration, or with
 -  State "TODO"       from              [2018-07-29 Sun 13:11]
 :END:
 
-***** TODO [[https://github.com/jwiegley/use-package][use-package: A use-package declaration for simplifying your .emacs]] :needs_examples:
+***** TODO [[https://github.com/jwiegley/use-package][use-package: A use-package declaration for simplifying your .emacs]] :needs_examples:built_in:
 :PROPERTIES:
 :ID:       540617fd-d4ff-47df-89da-6c48c8f27785
 :CUSTOM_ID: use-package-a-use-package-declaration-for-simplifying-your-emacs
@@ -2461,7 +2765,30 @@ The script can run Emacs with the developer's local Emacs configuration, or with
 -  State "TODO"       from              [2018-07-29 Sun 13:11]
 :END:
 
-Developed by the current maintainer of Emacs, himself, John Wiegley.
+Developed by the current maintainer of Emacs, himself, John Wiegley.  Since Emacs 29, =use-package= is [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][built in to Emacs]] and no longer needs to be installed separately.  See the [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][use-package Info manual]] for documentation.
+
+***** =package-vc=: Install packages from VC checkouts           :built_in:
+:PROPERTIES:
+:CUSTOM_ID: package-vc
+:END:
+
+New in Emacs 29, =package-vc= extends =package.el= to install packages directly from version-control checkouts (Git, etc.) rather than only from archive tarballs.  This is useful for package authors who want users to try development versions, and for users who want to track a package's repository.
+
+Key commands:
+- =package-vc-install=: Install a package from a VC URL.
+- =package-vc-checkout=: Check out a package's repository.
+- =package-vc-prepare-patch=: Prepare a patch from a checked-out package.
+
+The user option =package-vc-selected-packages= allows declarative specification of VC packages, similar to =package-selected-packages= for archive packages.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Fetching-Package-Sources.html][the Emacs manual on Fetching Package Sources]].
+
+***** =package-install-upgrade-built-in=                         :built_in:
+:PROPERTIES:
+:CUSTOM_ID: package-install-upgrade-built-in
+:END:
+
+New in Emacs 29, this user option, when non-nil, allows =package-install= to upgrade packages that are built in to Emacs (such as =use-package= and =eglot=) to newer versions from GNU ELPA.
 
 ***** [[https://github.com/Malabarba/paradox][paradox: modernizing Emacs' Package Menu. With package ratings, usage statistics, customizability, and more.]]
 :PROPERTIES:
@@ -2576,6 +2903,12 @@ This example shows the use of =pcase-let*= to destructure and bind a nested alis
       (list letter second)))  ;; => ("a" "b")
 #+END_SRC
 
+***** Recent pcase changes (Emacs 28–31)
+
+- Emacs 28: =or= patterns now bind the union of variables from all branches.  New =(pred (not FUN))= pattern.  New =cl-type= pattern for CLOS type checking.  New =pcase-setq= macro.
+- Emacs 30: Functions in =pred= and =app= patterns can now specify the argument position explicitly.  For example, =(pred (> _ 5))= is equivalent to the old =(pred (< 5))=, and is often clearer.
+- Emacs 31: Nested backquotes are no longer supported in pcase patterns.  Code using nested backquote patterns must be rewritten.
+
 **** [[https://github.com/VincentToups/shadchen-el][shadchen-el]]                                             :shadchen:el:
 :PROPERTIES:
 :CUSTOM_ID: shadchen-el
@@ -2623,6 +2956,17 @@ let-alist is the best thing to happen to associative lists since the invention o
 :END:
 
 Here Artur introduces the macro and gives examples.
+
+***** Emacs 31: list indexing
+
+In Emacs 31, =let-alist= supports indexing into list values: symbols containing numbers are interpreted as list indices.  For example, =.key.0= looks up =key= in the alist and returns its first element.
+
+**** =cond*=: Alternative pattern matching (Emacs 31)    :built_in:macros:
+:PROPERTIES:
+:CUSTOM_ID: cond-alternative-pattern-matching
+:END:
+
+New in Emacs 31, =cond*= is an alternative to =cond= and =pcase=.  Like them, it evaluates clauses in order and executes the first match.  =cond*= supports pcase's pattern-matching syntax and also provides a different, arguably less cryptic pattern syntax.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/cond_002a-Macro.html][the Elisp manual on the cond* Macro]].
 
 **** =with-dict=, =with-plist-vals=              :macros:plists:
 :PROPERTIES:
@@ -2821,6 +3165,40 @@ Chris explains how lambdas work with regard to byte-compilation and lexical bind
 :END:
 
 Rocky Bernstein's project to document the Elisp bytecode format (aka LAP, or Lisp Assembly Program).
+
+**** Native compilation (Emacs 28–31)                  :built_in:compilation:
+:PROPERTIES:
+:CUSTOM_ID: native-compilation
+:END:
+
+Native compilation (compiling Elisp to machine code via =libgccjit=) has matured significantly since Emacs 28:
+
+- Emacs 28: AOT (ahead-of-time) compilation via =--with-native-compilation=aot=; =native-compile-prune-cache= to clean the ELN cache.
+- Emacs 30: =compilation-safety= user option controls how safe native code is (0 = fastest but may crash on type errors, 1 = default, 2 = safest).  The =safety= declare form sets this per-function.
+- Emacs 30: =ftype= declare form specifies function argument/return types for the native compiler: =(declare (ftype (function (integer boolean) string)))=.  Incorrect types may crash Emacs at =compilation-safety= 0.
+- Emacs 30: =important-return-value= declare form warns when a function's return value is implicitly ignored.
+- Emacs 31: =native-compile-directory= natively compiles all Lisp files in a directory tree.
+- Emacs 31: =native-comp-async-on-battery-power= controls whether async native-comp runs on battery.
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Native-Compilation.html][the Elisp manual on Native Compilation]].
+
+**** Byte-compilation changes (Emacs 29–31)            :built_in:compilation:
+:PROPERTIES:
+:CUSTOM_ID: byte-compilation-changes
+:END:
+
+- Emacs 29: Interpreted closures are now "safe for space" — they only capture the part of the lexical environment they need, avoiding potential memory leaks.
+- Emacs 30: Bytecode is always loaded eagerly; =byte-compile-dynamic= has no effect and =fetch-bytecode= is obsolete.
+- Emacs 30: Many new byte-compiler warnings (see [[#new-byte-compilation-warnings][Checkers / linters]]).
+- Emacs 31: =byte-compile-cond-use-jump-table= is obsolete.
+- Emacs 31: =current-cpu-time= gives access to CPU time for benchmarking.
+
+**** =garbage-collect-heapsize= (Emacs 31)              :built_in:profiling:
+:PROPERTIES:
+:CUSTOM_ID: garbage-collect-heapsize
+:END:
+
+New in Emacs 31, =garbage-collect-heapsize= returns the same info as =garbage-collect= but without actually performing a collection.  Useful for monitoring memory usage without the overhead of a full GC.
 
 *** Tools               
 :PROPERTIES:
@@ -3489,6 +3867,19 @@ Chris Wellons explains how to build strings in several steps.  This is achieved 
 :CUSTOM_ID: sel-the-long-lost-emacs-string-manipulation-library
 :END:
 
+**** Built-in string functions (Emacs 28–31)                    :built_in:
+:PROPERTIES:
+:CUSTOM_ID: built-in-string-functions
+:END:
+
+Emacs 28–31 added many string functions that previously required =s.el= or hand-rolled code:
+
+- Emacs 28: =string-search=, =string-replace= (fixed-string search/replace without regexp or match-data side effects), =string-pad=, =string-truncate-left=, =string-chop-newline=, =string-split=, =string-lines= (improved), =string-clean-whitespace=, =string-fill=, =string-limit=.
+- Emacs 29: =string-equal-ignore-case=.
+- Emacs 31: =string-pixel-width= now takes an optional BUFFER argument for face-remapping awareness; new =truncate-string-pixelwise= truncates by pixel width; =replace-region-contents= was promoted to C and now accepts a string or buffer directly (passing a function is deprecated).
+
+Note that in Emacs 31, string mutation via =aset= is further restricted: on unibyte strings the new character must be a single byte, and on multibyte strings both characters must be ASCII.  See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Strings.html][the Elisp manual on Strings]].
+
 *** Tools                                                           :tools:
 :PROPERTIES:
 :TOC: :depth 1
@@ -3590,6 +3981,14 @@ Cucumber is a great integration testing tool, used mostly for testing web applic
 :END:
 
 This is the standard, built-in Emacs testing library, used by core code and third-party packages alike.
+
+***** Recent ERT improvements (Emacs 29–31)
+
+- Emacs 29: New variables =ert-batch-print-length= and =ert-batch-print-level= control printing of Lisp values in batch test results.  Redefining an ERT test in batch mode now signals an error, catching duplicate test names.
+- Emacs 29: ERT can produce JUnit XML test reports via the =EMACS_TEST_JUNIT_REPORT= environment variable, enabling CI/CD integration.
+- Emacs 29: New =ert-test-erts-file= function and =erts-mode= allow testing buffer actions (indentation, fontification, etc.) from declarative =.erts= files.  See [[https://www.gnu.org/software/emacs/manual/html_node/ert/erts.html][the ERT manual on ERTS]].
+- Emacs 31: The macros =ert-with-test-buffer=, =ert-with-buffer-selected=, and =ert-with-buffer-renamed=, previously experimental in =ert-x=, are now stable and moved to =ert= itself.
+- Emacs 31: New =ert-play-keys= function sends keys to interactive input during tests, complementing =ert-simulate-keys=.
 
 *** Libraries                                                   :libraries:
 :PROPERTIES:
@@ -3693,6 +4092,60 @@ To work around this, pass a format string to ~error~, like ~(error "%s" "Foo doe
 :END:
 
 + See [[*Building / Testing][Building / Testing tools]].
+
+** Tree-sitter                                                :tree_sitter:
+:PROPERTIES:
+:TOC:      :include descendants :depth 2
+:CUSTOM_ID: tree-sitter
+:END:
+
+Tree-sitter is a parser generator tool and incremental parsing library.  Emacs 29 added built-in support for tree-sitter via the =treesit.el= library, and Emacs 30 made tree-sitter-based major modes the default for many languages.  Package authors who write major modes or font-lock rules should be familiar with the tree-sitter API.
+
+*** Articles                                                     :articles:
+:PROPERTIES:
+:CUSTOM_ID: tree-sitter-articles
+:END:
+
+**** [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Parsing-Program-Source.html][Parsing Program Source (Elisp manual)]               :built_in:tutorial:
+:PROPERTIES:
+:CUSTOM_ID: parsing-program-source
+:END:
+
+The Elisp manual chapter on tree-sitter covers the =treesit.el= API: creating parsers, querying syntax trees, and using tree-sitter for font-lock, indentation, and navigation.
+
+*** Libraries                                                   :libraries:
+:PROPERTIES:
+:CUSTOM_ID: tree-sitter-libraries
+:END:
+
+**** =treesit.el=: Tree-sitter API for Emacs                    :built_in:
+:PROPERTIES:
+:CUSTOM_ID: treesit-el
+:END:
+
+=treesit.el= is the built-in Emacs interface to the tree-sitter library.  It provides:
+
+- Parser creation and management (=treesit-parser-create=, =treesit-parser-list=).
+- Syntax tree queries (=treesit-query-capture=, =treesit-query-range=).
+- Font-lock integration via =treesit-font-lock-rules= (Emacs 29; Emacs 30 added =:default-language=).
+- Indentation via =treesit-simple-indent-rules=.
+- Navigation: =treesit-thing-settings=, =treesit-forward-sexp=, =treesit-transpose-sexps=, =treesit-forward-sentence= (Emacs 30).
+- Imenu and outline integration via =treesit-simple-imenu-settings= and =treesit-outline-predicate=.
+- Grammar installation: =treesit-install-language-grammar= (Emacs 31 can use a local directory instead of a URL).
+
+See [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Parsing-Program-Source.html][the Elisp manual on Parsing Program Source]].
+
+*** Best practices                                         :best_practices:
+:PROPERTIES:
+:CUSTOM_ID: tree-sitter-best-practices
+:END:
+
+**** Tree-sitter major mode conventions
+
+- Tree-sitter major modes use the =-ts-mode= suffix (e.g. =python-ts-mode=, =c-ts-mode=).
+- Emacs 30 uses =major-mode-remap-alist= to automatically remap built-in modes to their tree-sitter equivalents.  Packages can set =major-mode-remap-defaults= (Emacs 30) to provide default remappings.
+- Emacs 31 added =treesit-enabled-modes= to control which tree-sitter modes are active.
+- Each tree-sitter mode requires a language grammar library (=libtree-sitter-LANG.so=); Emacs looks in =treesit-extra-load-path=, =~/.emacs.d/tree-sitter=, and standard system directories.
 
 ** User interface                                                       :UI:
 :PROPERTIES:
@@ -3813,6 +4266,8 @@ Tabulated List mode is a major mode for displaying tabulated data, i.e., data co
 #+END_QUOTE
 
 + [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Tabulated-List-Mode.html][Manual]]
+
+In Emacs 30, the new buffer-local variable =tabulated-list-groups= controls display and separate sorting of groups of entries, enabling grouped list views.
 
 **** [[https://github.com/magit/transient][Transient]]
 :PROPERTIES:
@@ -4100,6 +4555,13 @@ produces this:
     </body>
   </html>
 #+END_SRC
+
+**** =dom-inner-text= (Emacs 31)                                :built_in:
+:PROPERTIES:
+:CUSTOM_ID: dom-inner-text
+:END:
+
+New in Emacs 31, =dom-inner-text= gets all the text within a DOM node recursively, returning it as a concatenated string.  It replaces the now-obsolete functions =dom-text= and =dom-texts=.
 
 * Blogs                                                               :blogs:
 :PROPERTIES:
