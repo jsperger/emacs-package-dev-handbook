@@ -70,6 +70,51 @@ calling convention in =bench-multi-lexical=.
 General rather than Binding, since the Binding section covers variable
 scope, not key bindings.
 
+* Development landscape
+
+New top-level survey section added in Phase 3 (goal 4), placed between
+the =Emacs Lisp= and =Blogs= sections.  (Line numbers in this inventory
+are Phase 0 baseline references and drift as content is added; the
+Development landscape section currently begins at line 4567.)
+
+| Section | Line | Phase 3 (landscape) | Phase 6 (links) |
+|---------+------+---------------------+-----------------|
+| Development landscape | 4567 | DONE | TODO |
+
+Subsections (=**=): Package archives and distribution, Package
+configuration, Built-in packages that changed the landscape, Native
+compilation matures, Tree-sitter becomes the default, Testing and
+continuous integration, Cross-version compatibility.
+
+Notes and deferred findings:
+
+- Phase 3 adds no per-topic package recommendations.  The built-in
+  status of =eglot= (Emacs 29), =which-key= (Emacs 30), and =compat=
+  (Emacs 30 stub) is noted as landscape context; Phase 4 may revisit
+  topic Libraries/Tools lists accordingly.
+- Phase 5: the "Native compilation matures" subsection flags that the
+  Optimization benchmarks should be re-read with native compilation in
+  mind (they were last run on older Emacs).
+- Phase 6: new external links to spot-check for link rot:
+  =https://elpa.nongnu.org/=,
+  =https://elpa.gnu.org/packages/{compat,which-key,eglot}.html=,
+  =https://github.com/emacs-compat/compat=,
+  =https://github.com/purcell/setup-emacs=,
+  =https://github.com/purcell/package-lint=, the Eglot and use-package
+  Info manuals, and the Elisp "Native Compilation" and Emacs "Fetching
+  Package Sources" manual nodes.  The Emacs 31 "User Lisp Directory"
+  feature is referenced by Info node name only; its HTML manual is not
+  yet published (the node URL 404s), so no link was added.
+- Phase 7: the document's ToC drawers are stale from Phase 2 (e.g.
+  Tree-sitter is missing from the Emacs Lisp contents drawer), and a
+  full =org-make-toc= run currently renumbers some duplicate-title
+  CUSTOM_IDs (the four "Reference" subsections, and "Building /
+  Testing" / "Package installation/management").  The new Development
+  landscape section's CUSTOM_IDs and ToC drawer match =org-make-toc='s
+  output exactly (verified drift-free), but that pre-existing
+  regeneration must be handled deliberately in Phase 7 to avoid
+  breaking published anchors.
+
 * Blogs
 
 | Blog | Line | Phase 1 (correctness) | Phase 4 (packages) | Phase 5 (benchmarks) | Phase 6 (links) |

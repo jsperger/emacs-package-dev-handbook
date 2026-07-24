@@ -4,6 +4,43 @@
 Changes to the guide's content, most recent first.  This handbook is
 being revised to target Emacs 31; see =PLAN.org= for the full roadmap.
 
+* Unreleased (Phase 3 — Development-landscape overview)
+
+A new top-level survey section, [[#development-landscape][Development landscape]], summarizing
+how the package development ecosystem has shifted since the guide was
+last substantially updated (~2024, Emacs 28/29 era).  It is a
+pointer-rich overview that links to the per-topic sections rather than
+duplicating them; every claim was verified against =NEWS.29=–=NEWS.31=,
+the mastering-emacs articles, and =references/emacs-info=.
+
+** New section: Development landscape
+
+- /Package archives and distribution/: the distinct roles today of
+  GNU ELPA, NonGNU ELPA (introduced 2021, enabled by default since
+  Emacs 28), and MELPA; =package-vc= source installs (Emacs 29); the
+  Emacs 31 User Lisp directory; =package-x.el= obsoletion (Emacs 31);
+  and =package-install-upgrade-built-in= (Emacs 29).
+- /Package configuration/: =use-package= built-in since Emacs 29 and
+  how init-file conventions changed (including the =:vc= keyword).
+- /Built-in packages that changed the landscape/: Eglot (Emacs 29),
+  =which-key= and the Compat stub (Emacs 30), and tree-sitter modes as
+  defaults (Emacs 30).
+- /Native compilation matures/: maturity since Emacs 28 (JIT/AOT),
+  =compilation-safety= (Emacs 30), =native-compile-directory=
+  (Emacs 31), and the implications for performance advice.
+- /Tree-sitter becomes the default/: from optional (Emacs 29) to
+  default (Emacs 30+) via =major-mode-remap-alist=, and the impact on
+  mode authors.
+- /Testing and continuous integration/: the =erts-mode= /
+  =ert-test-erts-file= paradigm and JUnit reports (Emacs 29); GitHub
+  Actions replacing Travis CI; and the Eask / Eldev / makem.sh tooling.
+- /Cross-version compatibility/: the Compat library, =static-if= /
+  =static-when= (Emacs 30–31), and =Package-Requires= strategy.
+
+Brief "see also" cross-references were added from the relevant topic
+entries (Packaging, Optimization, General, Tree-sitter, Testing) to the
+new section.
+
 * Unreleased (Phase 2 — New-feature coverage)
 
 Coverage of package-development-relevant features added in Emacs
