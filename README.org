@@ -18,6 +18,7 @@ You can read this Org file directly on the [[https://github.com/alphapapa/emacs-
 :END:
 :CONTENTS:
 - [[#emacs-lisp][Emacs Lisp]]
+- [[#development-landscape][Development landscape]]
 - [[#blogs][Blogs]]
 - [[#people][People]]
 - [[#contributions][Contributions]]
@@ -4562,6 +4563,74 @@ produces this:
 :END:
 
 New in Emacs 31, =dom-inner-text= gets all the text within a DOM node recursively, returning it as a concatenated string.  It replaces the now-obsolete functions =dom-text= and =dom-texts=.
+
+* Development landscape                                          :landscape:
+:PROPERTIES:
+:TOC:      :include descendants :depth 1
+:CUSTOM_ID: development-landscape
+:END:
+:CONTENTS:
+- [[#package-archives-and-distribution][Package archives and distribution]]
+- [[#package-configuration][Package configuration]]
+- [[#built-in-packages-that-changed-the-landscape][Built-in packages that changed the landscape]]
+- [[#native-compilation-matures][Native compilation matures]]
+- [[#tree-sitter-becomes-the-default][Tree-sitter becomes the default]]
+- [[#testing-and-continuous-integration][Testing and continuous integration]]
+- [[#cross-version-compatibility][Cross-version compatibility]]
+:END:
+
+The topic sections above cover /how/ to use Emacs Lisp's features; this section surveys /how the ecosystem around package development has shifted/ since the guide was last substantially updated (around 2024, in the Emacs 28/29 era).  Changes to package archives, built-in packages, and tooling have altered the assumptions a package author can make.  Each subsection is a pointer-rich overview; the linked topic sections and manuals hold the detail.
+
+** Package archives and distribution
+:PROPERTIES:
+:CUSTOM_ID: package-archives-and-distribution
+:END:
+
+The three main archives have settled into distinct roles.  [[https://elpa.gnu.org/][GNU ELPA]] hosts packages maintained alongside Emacs, including newer versions of packages that also ship built-in; [[https://elpa.nongnu.org/][NonGNU ELPA]], introduced in 2021 and enabled by default since Emacs 28, offers a curated archive for non-GNU packages without requiring copyright assignment to the FSF; and [[https://melpa.org/][MELPA]] builds snapshot packages (with [[https://stable.melpa.org/][stable]] releases from tags) directly from upstream repositories.
+
+Distribution strategy changed with [[#package-vc][=package-vc=]] (Emacs 29): users can install a package straight from its Git repository (see [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Fetching-Package-Sources.html][Fetching Package Sources]] in the Emacs manual), so authors no longer need archive tarballs to let users track development versions.  Emacs 31 added the /User Lisp directory/ (Info node =(emacs) User Lisp Directory=): a =user-lisp/= subdirectory of the user's configuration that Emacs automatically byte-compiles, scrapes for autoload cookies, and adds to =load-path=.  In Emacs 31 the old archive-building library =package-x.el= is obsolete, as is =package-vc-install-from-checkout=, with the User Lisp directory as the recommended replacement.  Meanwhile, the user option [[#package-install-upgrade-built-in][=package-install-upgrade-built-in=]] (Emacs 29) lets users upgrade built-in packages (such as =eglot= and =use-package=) from GNU ELPA, so publishing a newer version to ELPA reaches users even when their Emacs bundles an older one.
+
+** Package configuration
+:PROPERTIES:
+:CUSTOM_ID: package-configuration
+:END:
+
+[[#use-package-a-use-package-declaration-for-simplifying-your-emacs][=use-package=]] has been [[https://www.gnu.org/software/emacs/manual/html_node/use-package/index.html][built in to Emacs since 29]], so configuration guides and tutorials now generally assume it is available without a separate install.  For a package author this raises the baseline expectation: users routinely configure packages with =use-package= declarations—including the =:vc= keyword, which installs from source via =package-vc=—so documentation and examples that show =use-package= usage meet users where they are.  See the [[#packaging][Packaging]] section for the handbook's =use-package= and =package-vc= coverage.
+
+** Built-in packages that changed the landscape
+:PROPERTIES:
+:CUSTOM_ID: built-in-packages-that-changed-the-landscape
+:END:
+
+A wave of formerly third-party packages has been absorbed into Emacs, changing what authors may assume is present.  [[https://www.gnu.org/software/emacs/manual/html_node/eglot/index.html][Eglot]] (Emacs 29) made an LSP client a first-class, built-in citizen, so language-server integration no longer requires recommending an external package.  Emacs 30 bundled [[https://elpa.gnu.org/packages/which-key.html][=which-key=]] and a stub of the [[https://elpa.gnu.org/packages/compat.html][Compat]] compatibility library (both from GNU ELPA), and made tree-sitter-based major modes the default for many languages (see [[#tree-sitter-becomes-the-default][Tree-sitter becomes the default]], below).  Because built-in packages can themselves be upgraded from ELPA (see [[#package-archives-and-distribution][Package archives and distribution]]), the line between "built-in" and "installable" has blurred.
+
+** Native compilation matures
+:PROPERTIES:
+:CUSTOM_ID: native-compilation-matures
+:END:
+
+Native compilation of Emacs Lisp to machine code, formally introduced as a build option in Emacs 28 (JIT by default, with ahead-of-time compilation via =--with-native-compilation=aot=), has matured into a routine part of the performance picture.  Emacs 30 added the =compilation-safety= user option (and the per-function =safety= declare form) to trade safety checks for speed, and Emacs 31 added =native-compile-directory= for batch-compiling a directory tree.  The practical upshot for performance advice: native compilation narrows the gap between hand-optimized idioms, so the handbook's [[#optimization][Optimization]] benchmarks—last run on older Emacs—should be re-read with native compilation in mind.  See [[#native-compilation][Native compilation]] for the feature details.
+
+** Tree-sitter becomes the default
+:PROPERTIES:
+:CUSTOM_ID: tree-sitter-becomes-the-default
+:END:
+
+Tree-sitter support moved from optional to default.  Emacs 29 introduced the built-in =treesit.el= API and =-ts-mode= variants of major modes; Emacs 30 began remapping many built-in modes to their tree-sitter equivalents automatically via =major-mode-remap-alist= (and added =major-mode-remap-defaults= for packages to supply default remappings).  For mode authors this means font-lock, indentation, and navigation increasingly target tree-sitter grammars, and that a mode's non-tree-sitter and tree-sitter variants should behave consistently—Emacs 30 declares the latter as submodes of the former so hooks and configuration carry over.  See the [[#tree-sitter][Tree-sitter]] topic for the =treesit.el= API and conventions.
+
+** Testing and continuous integration
+:PROPERTIES:
+:CUSTOM_ID: testing-and-continuous-integration
+:END:
+
+Emacs's testing story gained two notable capabilities in Emacs 29: =ert-test-erts-file= and =erts-mode=, a declarative paradigm for testing buffer actions (indentation, fontification, and the like) from =.erts= fixture files; and JUnit XML reports via the =EMACS_TEST_JUNIT_REPORT= environment variable for CI integration.  Both are covered in the [[#testing][Testing]] topic.  On the tooling side, GitHub Actions has largely replaced Travis CI as the default continuous integration for Emacs packages (see [[https://github.com/purcell/setup-emacs][setup-emacs]] for provisioning Emacs in workflows), and the build-and-test tooling has matured: [[#eask-cli-for-building-running-testing-and-managing-dependencies][Eask]], [[#eldev-elisp-development-tool][Eldev]], and [[#makemsh-makefile-like-script-for-building-and-testing-packages][makem.sh]] are surveyed in the [[#packaging][Packaging]] section, and [[https://github.com/purcell/package-lint][package-lint]] remains the standard metadata linter.
+
+** Cross-version compatibility
+:PROPERTIES:
+:CUSTOM_ID: cross-version-compatibility
+:END:
+
+Supporting a range of Emacs versions has gotten easier.  The [[https://elpa.gnu.org/packages/compat.html][Compat]] library (on GNU ELPA; [[https://github.com/emacs-compat/compat][source]]) provides forward-compatibility definitions so a package can use newer functions while declaring an older =Package-Requires= minimum; its definitions compile away to nothing on Emacs versions that already provide them, and Emacs 30 ships a stub so Compat is not installed unnecessarily.  Emacs 30 also added [[#static-if-static-when-static-unless][=static-if= / =static-when= / =static-unless=]] for compile-time conditional code (see the [[#general][General]] topic).  Together these reduce the need for runtime =fboundp= guards; the practical rule remains to set =Package-Requires= to the oldest version whose features the package actually uses.
 
 * Blogs                                                               :blogs:
 :PROPERTIES:
